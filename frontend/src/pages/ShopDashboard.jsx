@@ -90,9 +90,9 @@ export default function ShopDashboard() {
             }}
           >
             <img
-              src="/external-link.png"
+              src="/Link.png"
               alt="Open link"
-              style={{ width: 20, height: 20 }}
+              style={{ width: 30, height: 30 }}
             />
           </button>
 
