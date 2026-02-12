@@ -155,6 +155,107 @@ export default function ShopDashboard() {
           backgroundColor: "#373535"
         }}
       />
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%"
+        }}
+      >
+        {/* LEFT SIDE */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 20
+          }}
+        >
+          <input
+            type="text"
+            placeholder="Search"
+            style={{
+              width: 800,
+              padding: "12px 16px",
+              borderRadius: 999,
+              border: "1px solid #ccc",
+              fontSize: 16,
+              outline: "none"
+            }}
+          />
+
+          <button
+            type="button"
+            style={{
+              padding: "12px 35px",
+              fontSize: 16,
+              backgroundColor: "#1c85fd",
+              color: "#ffffff",
+              borderRadius: 50,
+              fontWeight: 620,
+              cursor: "pointer",
+              border: "none"
+            }}
+          >
+            Filter
+          </button>
+        </div>
+
+        {/* RIGHT SIDE */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 18
+          }}
+        >
+          {/* delete Button*/}
+          <button
+            type="button"
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: 15,
+              border: "1px solid #d1d5db",
+              backgroundColor: "#ffffff",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer"
+            }}
+          >
+            <img
+              src="/delete.png"
+              alt="Delete"
+              style={{ width: 32, height: 32 }}
+            />
+          </button>
+
+
+          <button
+            type="button"
+            style={{
+              padding: "12px 35px",
+              fontSize: 16,
+              backgroundColor: "#1c85fd",
+              color: "#ffffff",
+              borderRadius: 50,
+              fontWeight: 620,
+              cursor: "pointer",
+              border: "none"
+            }}
+          >
+            Add Product
+          </button>
+        </div>
+      </div>
+
+
+
+
+
+
+
     </div>
   )
 }
