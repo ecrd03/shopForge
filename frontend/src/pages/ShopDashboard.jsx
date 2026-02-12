@@ -1,4 +1,8 @@
+import { useNavigate } from "react-router-dom"
+
 export default function ShopDashboard() {
+  const navigate = useNavigate()
+
   return (
     <div
       style={{
@@ -11,18 +15,47 @@ export default function ShopDashboard() {
         boxSizing: "border-box"
       }}
     >
-      <h1 style={{ margin: 0 }}>Shop Dashboard</h1>
 
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between"
+        }}
+      >
+        <h1 style={{ margin: 0 }}>Shop Dashboard</h1>
+
+        {/* Profile button*/}
+        <button
+          type="button"
+          style={{
+            width: 52,
+            height: 52,
+            borderRadius: 60,
+            border: "1.2px solid #0d4bbf9e",
+            backgroundColor: "#ffffff3b",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer"
+          }}
+        >
+          <img
+            src="/ProfileButton.png"
+            alt="Profile"
+            style={{ width: 67, height: 63 }}
+          />
+        </button>
+      </div>
+      {/* line dividor*/}
       <div
         style={{
           width: "100%",
           height: 2,
-          backgroundColor: "#0000002e",
-          marginTop: -10
+          backgroundColor: "#0000002e"
         }}
       />
 
-      {/* header row */}
       <div
         style={{
           width: "100%",
@@ -32,16 +65,16 @@ export default function ShopDashboard() {
           flexWrap: "wrap"
         }}
       >
-        {/* left side */}
+
         <div
           style={{
             display: "flex",
             alignItems: "center",
-            paddingLeft: 40,
             gap: 40,
             minWidth: 0
           }}
         >
+          {/* icon image*/}
           <div
             style={{
               width: 120,
@@ -51,7 +84,7 @@ export default function ShopDashboard() {
               flexShrink: 0
             }}
           />
-
+          {/* Shop Name*/}
           <span
             style={{
               fontSize: 37,
@@ -63,20 +96,20 @@ export default function ShopDashboard() {
           </span>
         </div>
 
-        {/* right side buttons */}
+
         <div
           style={{
             display: "flex",
             alignItems: "center",
-            gap: 12,
-            marginRight: 20,
-            marginTop: 60
+            gap: 12
           }}
         >
-          {/* link icon button */}
+          {/* External Link Button*/}
           <button
             type="button"
-            onClick={() => window.open("https://www.etsy.com/shop/RedLineApparels", "_blank")}
+            onClick={() =>
+              window.open("https://www.etsy.com/shop/RedLineApparels", "_blank")
+            }
             style={{
               width: 44,
               height: 44,
@@ -92,13 +125,13 @@ export default function ShopDashboard() {
             <img
               src="/Link.png"
               alt="Open link"
-              style={{ width: 30, height: 30 }}
+              style={{ width: 28, height: 28 }}
             />
           </button>
 
-          {/* edit profile button */}
+          {/* Edit shop Profile Button*/}
           <button
-            type="button"
+            type="button" onClick={() => navigate("/editShopProfile")}
             style={{
               padding: "12px 20px",
               fontSize: 16,
@@ -114,13 +147,12 @@ export default function ShopDashboard() {
           </button>
         </div>
       </div>
-
+      {/* line dividor*/}
       <div
         style={{
           width: "100%",
           height: 2,
-          backgroundColor: "#373535",
-          marginTop: -20
+          backgroundColor: "#373535"
         }}
       />
     </div>

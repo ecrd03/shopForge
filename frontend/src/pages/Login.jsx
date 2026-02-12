@@ -6,66 +6,84 @@ export default function Login() {
     return (
         <div
             style={{
-                height: "calc(100vh - 60px)",
+                height: "100vh",
                 width: "100vw",
                 display: "flex",
-                justifyContent: "center",
-                alignItems: "center"
+                overflow: "hidden"
             }}
         >
+            {/* Left Image Banner */}
             <div
                 style={{
-                    transform: `translateY(${-90}px)`,
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    gap: 24
+                    flex: 1,
+                    backgroundImage: "url('/SFBanner.png')",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center"
                 }}
+            />
 
-
-            ><h1>Login</h1>
-                <input
-
-                    type="text"
-                    placeholder="Username"
-                    style={{
-                        width: 260,
-                        padding: "12px 16px",
-                        borderRadius: 999,
-                        border: "1px solid #ccc",
-                        fontSize: 16,
-                        outline: "none"
-                    }}
-                />
-
-                <input
-                    type="password"
-                    placeholder="Password"
-                    style={{
-                        width: 260,
-                        padding: "12px 16px",
-                        borderRadius: 999,
-                        border: "1px solid #ccc",
-                        fontSize: 16,
-                        outline: "none"
-                    }}
-                />
-
-
+            {/* Right Login */}
+            <div
+                style={{
+                    flex: 1,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center"
+                }}
+            >
                 <div
                     style={{
                         display: "flex",
-                        flexDirection: "row",
-                        gap: 20
+                        flexDirection: "column",
+                        alignItems: "center",
+                        gap: 24
                     }}
                 >
-                    <button onClick={() => navigate("/admin")}>
-                        Admin Dashboard
-                    </button>
+                    <h1>Login</h1>
+                    {/* userName Button*/}
+                    <input
+                        type="text"
+                        placeholder="Username"
+                        style={{
+                            width: 260,
+                            padding: "12px 16px",
+                            borderRadius: 999,
+                            border: "1px solid #ccc",
+                            fontSize: 16,
+                            outline: "none"
+                        }}
+                    />
+                    {/* password Button*/}
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        style={{
+                            width: 260,
+                            padding: "12px 16px",
+                            borderRadius: 999,
+                            border: "1px solid #ccc",
+                            fontSize: 16,
+                            outline: "none"
+                        }}
+                    />
 
-                    <button onClick={() => navigate("/shop")}>
-                        Shop Dashboard
-                    </button>
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            gap: 20
+                        }}
+                    >
+                        {/* Button actions*/}
+                        <button onClick={() => navigate("/admin")}>
+                            Admin Dashboard
+                        </button>
+
+                        <button onClick={() => navigate("/shop")}>
+                            Shop Dashboard
+                        </button>
+
+                    </div>
                 </div>
             </div>
         </div>
