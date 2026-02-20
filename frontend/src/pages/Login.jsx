@@ -84,6 +84,16 @@ export default function Login() {
                         </button>
 
                     </div>
+
+                    <span
+                        onClick={() => navigate("/createAccount")}
+                        style={{
+                            color: "blue",
+                            cursor: "pointer"
+                        }}
+                    >
+                        Create Account
+                    </span>
                 </div>
             </div>
         </div>

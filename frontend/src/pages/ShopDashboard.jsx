@@ -1,4 +1,9 @@
 import { useNavigate } from "react-router-dom"
+import ToggleButton from "../components/ToggleButton"
+import Header from "../components/Header"
+import SearchBar from "../components/SearchBar"
+import Product from "../components/Product"
+
 
 export default function ShopDashboard() {
   const navigate = useNavigate()
@@ -15,46 +20,7 @@ export default function ShopDashboard() {
         boxSizing: "border-box"
       }}
     >
-
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between"
-        }}
-      >
-        <h1 style={{ margin: 0 }}>Shop Dashboard</h1>
-
-        {/* Profile button*/}
-        <button
-          type="button"
-          style={{
-            width: 52,
-            height: 52,
-            borderRadius: 60,
-            border: "1.2px solid #0d4bbf9e",
-            backgroundColor: "#ffffff3b",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer"
-          }}
-        >
-          <img
-            src="/ProfileButton.png"
-            alt="Profile"
-            style={{ width: 67, height: 63 }}
-          />
-        </button>
-      </div>
-      {/* line dividor*/}
-      <div
-        style={{
-          width: "100%",
-          height: 2,
-          backgroundColor: "#0000002e"
-        }}
-      />
+      <Header name="Shop Dashboard" />
 
       <div
         style={{
@@ -119,7 +85,8 @@ export default function ShopDashboard() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              cursor: "pointer"
+              cursor: "pointer",
+              marginTop: 70
             }}
           >
             <img
@@ -140,7 +107,8 @@ export default function ShopDashboard() {
               borderRadius: 5,
               fontWeight: 500,
               cursor: "pointer",
-              border: "none"
+              border: "none",
+              marginTop: 70
             }}
           >
             Edit Profile
@@ -152,7 +120,8 @@ export default function ShopDashboard() {
         style={{
           width: "100%",
           height: 2,
-          backgroundColor: "#373535"
+          backgroundColor: "#373535",
+          marginTop: -8
         }}
       />
       <div
@@ -163,43 +132,8 @@ export default function ShopDashboard() {
           width: "100%"
         }}
       >
-        {/* LEFT SIDE */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 20
-          }}
-        >
-          <input
-            type="text"
-            placeholder="Search"
-            style={{
-              width: 800,
-              padding: "12px 16px",
-              borderRadius: 999,
-              border: "1px solid #ccc",
-              fontSize: 16,
-              outline: "none"
-            }}
-          />
+        <SearchBar />
 
-          <button
-            type="button"
-            style={{
-              padding: "12px 35px",
-              fontSize: 16,
-              backgroundColor: "#1c85fd",
-              color: "#ffffff",
-              borderRadius: 50,
-              fontWeight: 620,
-              cursor: "pointer",
-              border: "none"
-            }}
-          >
-            Filter
-          </button>
-        </div>
 
         {/* RIGHT SIDE */}
         <div
@@ -242,7 +176,9 @@ export default function ShopDashboard() {
               borderRadius: 50,
               fontWeight: 620,
               cursor: "pointer",
-              border: "none"
+              border: "none",
+              whiteSpace: "nowrap"
+
             }}
           >
             Add Product
@@ -250,12 +186,37 @@ export default function ShopDashboard() {
         </div>
       </div>
 
+      {/* LEFT SIDE */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 20
+        }}
+      >
+        {/* product list */}
+      
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <Product />
+          <Product />
+          <Product />
+        </div>
 
 
+      </div>
 
+      {/* RIGHT SIDE */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 18
+        }}
+      >
 
-
-
+      </div>
     </div>
+
   )
 }
