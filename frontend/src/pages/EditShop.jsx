@@ -1,4 +1,6 @@
 import Header from "../components/Header"
+import InputBox from "../components/InputBox"
+import Theme from "../components/Theme"
 
 
 
@@ -16,7 +18,7 @@ export default function EditShop() {
       }}
     >
       <Header name="Edit Shop Profile" />
-      
+
       {/* split area */}
       <div
         style={{
@@ -29,7 +31,7 @@ export default function EditShop() {
         {/* left = 60% */}
         <div
           style={{
-            flex: 6,
+            flex: 5.4,
             borderRight: "1px solid #ddd",
             paddingRight: 16,
             boxSizing: "border-box"
@@ -57,25 +59,40 @@ export default function EditShop() {
               }}
             >
             </button>
+            {/* Edit Shop Name */}
+            <InputBox label="Enter Shop Name" />
 
-            {/* Shop Name Input*/}
-            <input
-              type="Enter Shop Name"
-              placeholder="Enter Shop Name"
-              style={{
-                width: 260,
-                padding: "12px 16px",
-                borderRadius: 999,
-                border: "1px solid #ccc",
-                fontSize: 16,
-                outline: "none"
-              }}
-            />
+          </div>
+          <div style={{ marginTop: 25, display: "flex", flexDirection: "column", width: "106%", gap: 14 }}>
+
+            <InputBox label="Description" multiline height={120} />
+
           </div>
 
 
+          <div style={{ marginTop: 30 }}>
+            <span style={{ fontSize: 17, fontWeight: 700, color: "#111" }}>
+              Theme
+            </span>
 
-          Left
+            <div
+              style={{
+                marginTop: 12,
+                display: "flex",
+                alignItems: "center",
+                gap: 22
+              }}
+            >
+              <Theme colorA="#ffffff" colorB="#2d2c2c" />
+              <Theme colorA="#000000" colorB="#ffffff" />
+              <Theme colorA="#061a9a" colorB="#17b6bc" />
+              <Theme colorA="#000000" colorB="#ee4c4c" />
+              <Theme colorA="#ffffff" colorB="#f3a0ed" />
+              <Theme colorA="#ffffff" colorB="#5162ea" />
+              <Theme colorA="#ffffff" colorB="#9e65ef" />
+            </div>
+          </div>
+
         </div>
 
         {/* right = 40% */}
@@ -84,108 +101,22 @@ export default function EditShop() {
             flex: 4,
             minWidth: 0
           }}
-        >
+        > <span style={{ fontSize: 17, fontWeight: 700, color: "#111" }}>
+              External Links
+            </span>
 
-          <span
-            style={{
-              fontSize: 37,
-              fontWeight: 700,
-              whiteSpace: "nowrap"
-            }}
-          >
-            Theme
-          </span>
-
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 25,
-              minWidth: 0
-            }}
-          >
-            {/* Theme #1 */}
-            <button
-              type="button"
-              style={{
-                width: 50,
-                height: 50,
-                borderRadius: 60,
-                border: "1.2px solid #0d4bbf9e",
-                backgroundColor: "#755ddd",
-                flexShrink: 0,
-                cursor: "pointer"
-              }}
-            >
-            </button>
-
-            {/* Theme #2 */}
-            <button
-              type="button"
-              style={{
-                width: 50,
-                height: 50,
-                borderRadius: 60,
-                border: "1.2px solid #0d4bbf9e",
-                backgroundColor: "#5ddd8c",
-                flexShrink: 0,
-                cursor: "pointer"
-              }}
-            >
-            </button>
-
-            {/* Theme #3 */}
-            <button
-              type="button"
-              style={{
-                width: 50,
-                height: 50,
-                borderRadius: 60,
-                border: "1.2px solid #0d4bbf9e",
-                backgroundColor: "#efed7a",
-                flexShrink: 0,
-                cursor: "pointer"
-              }}
-            >
-            </button>
-
-            {/* Theme #4 */}
-            <button
-              type="button"
-              style={{
-                width: 50,
-                height: 50,
-                borderRadius: 60,
-                border: "1.2px solid #0d4bbf9e",
-                backgroundColor: "#ee3131",
-                flexShrink: 0,
-                cursor: "pointer"
-              }}
-            >
-            </button>
-
-            {/* Theme #5 */}
-            <button
-              type="button"
-              style={{
-                width: 50,
-                height: 50,
-                borderRadius: 60,
-                border: "1.2px solid #0d4bbf9e",
-                backgroundColor: "#f58dee",
-                flexShrink: 0,
-                cursor: "pointer"
-              }}
-            >
-            </button>
-
-
-
-
-
-
-            Right
+          <div style={{ marginTop: 18, display: "flex", flexDirection: "column", gap: 14 }}>
+            <InputBox label="Instagram" toggle />
+            <InputBox label="Facebook" toggle />
+            <InputBox label="Twitter" toggle />
+            <InputBox label="TikTok" toggle />
+            <InputBox label="Etsy" toggle />
+            <InputBox label="Shopify" toggle />
+            <InputBox label="Depop" toggle />
+            <InputBox label="Ebay" toggle />
           </div>
+
+
         </div>
 
       </div>

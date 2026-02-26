@@ -1,34 +1,37 @@
 import ToggleButton from "../components/ToggleButton"
-import { useState } from "react"
+import Cell from "../components/Cell"
 
-export default function Product() {
-  const [name, setName] = useState("")
-  const [price, setPrice] = useState("")
-  const [stock, setStock] = useState("")
-  const [tags, setTags] = useState("")
-  const [imagesCount, setImagesCount] = useState("")
+const inputStyle = {
+  width: "100%",
+  border: "none",
+  outline: "none",
+  fontSize: 14,
+  backgroundColor: "transparent",
+  minWidth: 0
+}
+
+export default function Product({ product, onChange }) {
+  const safeProduct = product ?? {
+    name: "",
+    price: "",
+    stock: "",
+    tags: "",
+    imagesCount: ""
+  }
+
+  function update(field, value) {
+    const updated = { ...safeProduct, [field]: value }
+    if (onChange) onChange(updated)
+  }
 
   return (
-    <div
-      style={{
-        width: "100%",
-        display: "flex",
-        alignItems: "center",
-        gap: 16
-      }}
-    >
-      {/* LEFT: toggle (outside) */}
-      <div
-        style={{
-          width: 92,
-          display: "flex",
-          justifyContent: "center"
-        }}
-      >
+    <div style={{ width: "116%", display: "flex", alignItems: "center", gap: 16 }}>
+      {/* LEFT: toggle */}
+      <div style={{ width: 92, display: "flex", justifyContent: "center" }}>
         <ToggleButton />
       </div>
 
-      {/* RIGHT: pill row */}
+      {/* RIGHT: pill */}
       <div
         style={{
           flex: 1,
@@ -43,8 +46,8 @@ export default function Product() {
       >
         <Cell style={{ flex: 2 }}>
           <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={safeProduct.name}
+            onChange={(e) => update("name", e.target.value)}
             style={inputStyle}
             placeholder="Name"
           />
@@ -52,8 +55,8 @@ export default function Product() {
 
         <Cell divider style={{ flex: 1 }}>
           <input
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
+            value={safeProduct.price}
+            onChange={(e) => update("price", e.target.value)}
             style={inputStyle}
             placeholder="Price"
           />
@@ -61,8 +64,8 @@ export default function Product() {
 
         <Cell divider style={{ flex: 1 }}>
           <input
-            value={stock}
-            onChange={(e) => setStock(e.target.value)}
+            value={safeProduct.stock}
+            onChange={(e) => update("stock", e.target.value)}
             style={inputStyle}
             placeholder="Stock"
           />
@@ -70,8 +73,8 @@ export default function Product() {
 
         <Cell divider style={{ flex: 2 }}>
           <input
-            value={tags}
-            onChange={(e) => setTags(e.target.value)}
+            value={safeProduct.tags}
+            onChange={(e) => update("tags", e.target.value)}
             style={inputStyle}
             placeholder="Tags"
           />
@@ -79,8 +82,8 @@ export default function Product() {
 
         <Cell divider style={{ flex: 1.2, justifyContent: "center" }}>
           <input
-            value={imagesCount}
-            onChange={(e) => setImagesCount(e.target.value)}
+            value={safeProduct.imagesCount}
+            onChange={(e) => update("imagesCount", e.target.value)}
             style={{ ...inputStyle, textAlign: "center" }}
             placeholder="Images"
           />
@@ -88,31 +91,4 @@ export default function Product() {
       </div>
     </div>
   )
-}
-
-function Cell({ children, divider = false, style = {} }) {
-  return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        padding: "0 16px",
-        minWidth: 0,
-        height: "100%",
-        ...(divider ? { borderLeft: "1px solid #e5e7eb" } : {}),
-        ...style
-      }}
-    >
-      {children}
-    </div>
-  )
-}
-
-const inputStyle = {
-  width: "100%",
-  border: "none",
-  outline: "none",
-  fontSize: 14,
-  backgroundColor: "transparent",
-  minWidth: 0
 }
