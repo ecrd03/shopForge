@@ -1,3 +1,4 @@
+import Divider from "../components/divider"
 import Header from "../components/Header"
 import InputBox from "../components/InputBox"
 import Theme from "../components/Theme"
@@ -102,10 +103,17 @@ export default function EditShop() {
             minWidth: 0
           }}
         > <span style={{ fontSize: 17, fontWeight: 700, color: "#111" }}>
-              External Links
-            </span>
+            External Links
+          </span>
 
-          <div style={{ marginTop: 18, display: "flex", flexDirection: "column", gap: 14 }}>
+          <div style={{
+            marginTop: 18,
+            display: "flex",
+            flexDirection: "column",
+            gap: 5,
+            maxHeight: "62vh",
+            overflowY: "auto"
+          }}>
             <InputBox label="Instagram" toggle />
             <InputBox label="Facebook" toggle />
             <InputBox label="Twitter" toggle />
@@ -115,11 +123,34 @@ export default function EditShop() {
             <InputBox label="Depop" toggle />
             <InputBox label="Ebay" toggle />
           </div>
-
-
         </div>
-
       </div>
+
+      {/* line dividor*/}
+      <Divider />
+      
+      <button
+        type="button"
+        style={{
+          padding: "12px 35px",
+          fontSize: 16,
+          backgroundColor: "#1c85fd",
+          color: "#ffffff",
+          borderRadius: 50,
+          fontWeight: 620,
+          cursor: "pointer",
+          border: "none",
+          whiteSpace: "nowrap",
+          marginTop: -8,
+          alignSelf: "flex-end"
+        }}
+      >
+        Save Changes
+      </button>
+
+
+
+
     </div>
   )
 }

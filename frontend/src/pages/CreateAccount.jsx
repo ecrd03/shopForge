@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom"
+import Divider from "../components/divider"
+
 
 export default function CreateAccount() {
     const navigate = useNavigate()
@@ -128,14 +130,8 @@ export default function CreateAccount() {
                         />
                         </div>
                     {/* Dividor*/}
-                    <div
-                        style={{
-                            width: "100%",
-                            height: 2,
-                            backgroundColor: "#0000002e",
-                            marginTop: -10
-                        }}
-                    />
+                    {/* line dividor*/}
+                          <Divider />
 
                     {/* User Name*/}
                     <div

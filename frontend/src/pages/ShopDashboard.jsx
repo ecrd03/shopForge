@@ -114,16 +114,22 @@ export default function ShopDashboard() {
             Edit Profile
           </button>
         </div>
+
+
       </div>
+
       {/* line dividor*/}
       <div
         style={{
           width: "100%",
-          height: 2,
-          backgroundColor: "#373535",
-          marginTop: -8
+          height: 1,
+          backgroundColor: "#00000073",
+          flexShrink: 0,
+          position: "relative",
+          
         }}
       />
+
       <div
         style={{
           display: "flex",
@@ -195,9 +201,15 @@ export default function ShopDashboard() {
         }}
       >
         {/* product list */}
-      
+
 
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <Product />
+          <Product />
+          <Product />
+          <Product />
+          <Product />
+          <Product />
           <Product />
           <Product />
           <Product />
