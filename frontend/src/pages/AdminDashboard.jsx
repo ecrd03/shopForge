@@ -17,7 +17,14 @@ export default function AdminDashboard() {
         boxSizing: "border-box"
       }}
     >
-      <Header name="Admin Dashboard" />
+      <Header
+        name="Admin Dashboard"
+        user={{ name: "Eric Admin Profile", avatarUrl: "" }}
+        onSignOut={() => {
+          localStorage.removeItem("token")
+          navigate("/login")
+        }}
+      />
       <SearchBar />
     </div>
   )

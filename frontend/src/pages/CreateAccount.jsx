@@ -1,9 +1,31 @@
 import { useNavigate } from "react-router-dom"
 import Divider from "../components/divider"
 
-
 export default function CreateAccount() {
     const navigate = useNavigate()
+
+    const rowStyle = {
+        display: "flex",
+        alignItems: "center",
+        gap: 12
+    }
+
+    const labelStyle = {
+        width: 170,
+        fontSize: 20,
+        fontWeight: 400,
+        textAlign: "right",
+        whiteSpace: "nowrap"
+    }
+
+    const inputStyle = {
+        width: 260,
+        padding: "12px 16px",
+        borderRadius: 999,
+        border: "1px solid #ccc",
+        fontSize: 16,
+        outline: "none"
+    }
 
     return (
         <div
@@ -20,17 +42,19 @@ export default function CreateAccount() {
                     flex: 1,
                     backgroundImage: "url('/SFBanner.png')",
                     backgroundSize: "cover",
-                    backgroundPosition: "center"
+                    backgroundPosition: "center",
+
                 }}
             />
 
-            {/* Right Login */}
+            {/* Right Form */}
             <div
                 style={{
                     flex: 1,
                     display: "flex",
                     justifyContent: "center",
-                    alignItems: "center"
+                    alignItems: "center",
+
                 }}
             >
                 <div
@@ -38,200 +62,69 @@ export default function CreateAccount() {
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
-                        gap: 24
+                        gap: 24,
+                        width: 440,
+                        marginRight: 95
+
                     }}
                 >
-                    <h1>Create Account</h1>
-                    {/* Name*/}
-                    <div
-                        style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            gap: 12
-                        }}
-                    >
-                        <span
-                            style={{
-                                fontSize: 20,
-                                fontWeight: 400,
-                                whiteSpace: "nowrap"
-                            }}
-                        >
-                            Name
-                        </span>
-                        <input
-                            type="text"
-                            style={{
-                                width: 260,
-                                padding: "12px 16px",
-                                borderRadius: 999,
-                                border: "1px solid #ccc",
-                                fontSize: 16,
-                                outline: "none"
-                            }}
-                        />
-                        </div>
-                    {/* Email*/}
-                    <div
-                        style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            gap: 12
-                        }}
-                    >
-                        <span
-                            style={{
-                                fontSize: 20,
-                                fontWeight: 400,
-                                whiteSpace: "nowrap"
-                            }}
-                        >
-                            Email
-                        </span>
-                        <input
-                            type="text"
-                            style={{
-                                width: 260,
-                                padding: "12px 16px",
-                                borderRadius: 999,
-                                border: "1px solid #ccc",
-                                fontSize: 16,
-                                outline: "none"
-                            }}
-                        />
-                        </div>
-                    {/* Number*/}
-                    <div
-                        style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            gap: 12
-                        }}
-                    >
-                        <span
-                            style={{
-                                fontSize: 20,
-                                fontWeight: 400,
-                                whiteSpace: "nowrap"
-                            }}
-                        >
-                            Number
-                        </span>
-                        <input
-                            type="text"
-                            style={{
-                                width: 260,
-                                padding: "12px 16px",
-                                borderRadius: 999,
-                                border: "1px solid #ccc",
-                                fontSize: 16,
-                                outline: "none"
-                            }}
-                        />
-                        </div>
-                    {/* Dividor*/}
-                    {/* line dividor*/}
-                          <Divider />
+                    <h1 style={{ fontSize: 48, marginBottom: 5, marginLeft: 95 }}>
+                        Create Account
+                    </h1>
 
-                    {/* User Name*/}
-                    <div
-                        style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            gap: 12
-                        }}
-                    >
-                        <span
-                            style={{
-                                fontSize: 20,
-                                fontWeight: 400,
-                                whiteSpace: "nowrap"
-                            }}
-                        >
-                            User Name
-                        </span>
-                        <input
-                            type="text"
-                            style={{
-                                width: 260,
-                                padding: "12px 16px",
-                                borderRadius: 999,
-                                border: "1px solid #ccc",
-                                fontSize: 16,
-                                outline: "none"
-                            }}
-                        />
-                        </div>
-                    {/*password*/}
-                    <div
-                        style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            gap: 12
-                        }}
-                    >
-                        <span
-                            style={{
-                                fontSize: 20,
-                                fontWeight: 400,
-                                whiteSpace: "nowrap"
-                            }}
-                        >
-                            Password
-                        </span>
-                        <input
-                            type="password"
-                            style={{
-                                width: 260,
-                                padding: "12px 16px",
-                                borderRadius: 999,
-                                border: "1px solid #ccc",
-                                fontSize: 16,
-                                outline: "none"
-                            }}
-                        />
-                        </div>
-                    {/* Confirm password*/}
-                    <div
-                        style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            gap: 12
-                        }}
-                    >
-                        <span
-                            style={{
-                                fontSize: 20,
-                                fontWeight: 400,
-                                whiteSpace: "nowrap"
-                            }}
-                        >
-                            Confirm Password
-                        </span>
-                        <input
-                            type="password"
-                            style={{
-                                width: 260,
-                                padding: "12px 16px",
-                                borderRadius: 999,
-                                border: "1px solid #ccc",
-                                fontSize: 16,
-                                outline: "none"
-                            }}
-                        />
-                        </div>
+                    {/* Name */}
+                    <div style={rowStyle}>
+                        <span style={labelStyle}>Name</span>
+                        <input type="text" style={inputStyle} />
+                    </div>
 
+                    {/* Email */}
+                    <div style={rowStyle}>
+                        <span style={labelStyle}>Email</span>
+                        <input type="text" style={inputStyle} />
+                    </div>
+
+                    {/* Number */}
+                    <div style={rowStyle}>
+                        <span style={labelStyle}>Number</span>
+                        <input type="text" style={inputStyle} />
+                    </div>
+
+                    {/* Divider */}
+                    <div style={{ width: "100%", margin: "10px 0", marginLeft: 95 }}>
+                        <Divider />
+                    </div>
+
+                    {/* Username */}
+                    <div style={rowStyle}>
+                        <span style={labelStyle}>User Name</span>
+                        <input type="text" style={inputStyle} />
+                    </div>
+
+                    {/* Password */}
+                    <div style={rowStyle}>
+                        <span style={labelStyle}>Password</span>
+                        <input type="password" style={inputStyle} />
+                    </div>
+
+                    {/* Confirm Password */}
+                    <div style={rowStyle}>
+                        <span style={labelStyle}>Confirm Password</span>
+                        <input type="password" style={inputStyle} />
+                    </div>
+
+                    {/* Buttons */}
                     <div
                         style={{
                             display: "flex",
-                            flexDirection: "row",
-                            gap: 20
+                            gap: 20,
+                            marginTop: 10,
+                            marginLeft: 95
                         }}
                     >
-
-                        {/* Cancel*/}
                         <button
                             type="button"
+                            onClick={() => navigate("/")}
                             style={{
                                 padding: "12px 35px",
                                 fontSize: 16,
@@ -246,9 +139,9 @@ export default function CreateAccount() {
                             Cancel
                         </button>
 
-                        {/* Create*/}
                         <button
                             type="button"
+                            onClick={() => navigate("/")}
                             style={{
                                 padding: "12px 35px",
                                 fontSize: 16,
@@ -262,8 +155,8 @@ export default function CreateAccount() {
                         >
                             Create
                         </button>
-
                     </div>
+
                 </div>
             </div>
         </div>

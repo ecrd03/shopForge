@@ -20,7 +20,14 @@ export default function ShopDashboard() {
         boxSizing: "border-box"
       }}
     >
-      <Header name="Shop Dashboard" />
+      <Header
+        name="Shop Dashboard"
+        user={{ name: "Eric Shop Profile", avatarUrl: "" }}
+        onSignOut={() => {
+          localStorage.removeItem("token")
+          navigate("/login")
+        }}
+      />
 
       <div
         style={{
@@ -126,7 +133,7 @@ export default function ShopDashboard() {
           backgroundColor: "#00000073",
           flexShrink: 0,
           position: "relative",
-          
+
         }}
       />
 

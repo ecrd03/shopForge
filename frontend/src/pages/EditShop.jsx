@@ -2,10 +2,12 @@ import Divider from "../components/divider"
 import Header from "../components/Header"
 import InputBox from "../components/InputBox"
 import Theme from "../components/Theme"
+import { useNavigate } from "react-router-dom"
 
 
 
 export default function EditShop() {
+  const navigate = useNavigate()
   return (
     <div
       style={{
@@ -18,7 +20,14 @@ export default function EditShop() {
         boxSizing: "border-box"
       }}
     >
-      <Header name="Edit Shop Profile" />
+      <Header
+        name="Edit Shop Profile"
+        user={{ name: "Eric Shop Profile", avatarUrl: "" }}
+        onSignOut={() => {
+          localStorage.removeItem("token")
+          navigate("/login")
+        }}
+      />
 
       {/* split area */}
       <div
@@ -128,25 +137,71 @@ export default function EditShop() {
 
       {/* line dividor*/}
       <Divider />
-      
-      <button
-        type="button"
-        style={{
-          padding: "12px 35px",
-          fontSize: 16,
-          backgroundColor: "#1c85fd",
-          color: "#ffffff",
-          borderRadius: 50,
-          fontWeight: 620,
-          cursor: "pointer",
-          border: "none",
-          whiteSpace: "nowrap",
-          marginTop: -8,
-          alignSelf: "flex-end"
-        }}
-      >
-        Save Changes
-      </button>
+
+      {/* bottom buttons */}
+<div
+  style={{
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: -8
+  }}
+>
+  {/* back button */}
+  <button
+    type="button"
+    onClick={() => navigate("/shop")}
+    style={{
+      padding: "12px 30px",
+      fontSize: 18,
+      backgroundColor: "#f1f1f1",
+      color: "#111",
+      borderRadius: 50,
+      fontWeight: 600,
+      cursor: "pointer",
+      border: "1px solid #ddd"
+    }}
+  >
+    Back
+  </button>
+
+  {/* right buttons */}
+  <div style={{ display: "flex", gap: 12 }}>
+    
+    <button
+      type="button"
+      style={{
+        padding: "12px 40px",
+        fontSize: 18,
+        backgroundColor: "#ffffff",
+        color: "#111",
+        borderRadius: 50,
+        fontWeight: 600,
+        cursor: "pointer",
+        border: "1px solid #ddd"
+      }}
+    >
+      Cancel
+    </button>
+
+    <button
+      type="button"
+      style={{
+        padding: "12px 35px",
+        fontSize: 16,
+        backgroundColor: "#1c85fd",
+        color: "#ffffff",
+        borderRadius: 50,
+        fontWeight: 620,
+        cursor: "pointer",
+        border: "none"
+      }}
+    >
+      Save Changes
+    </button>
+
+  </div>
+</div>
 
 
 
