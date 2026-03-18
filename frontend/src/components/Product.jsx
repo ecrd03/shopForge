@@ -1,5 +1,6 @@
 import ToggleButton from "../components/ToggleButton"
 import Cell from "../components/Cell"
+import SaveDeleteProduct from "../components/SaveDeleteProduct"
 
 const inputStyle = {
   width: "100%",
@@ -10,7 +11,17 @@ const inputStyle = {
   minWidth: 0
 }
 
-export default function Product({ product, onChange }) {
+
+
+export default function Product({
+  product,
+  onChange,
+  isSaved,
+  showDelete,
+  onSave,
+  onDelete
+}) {
+
   const safeProduct = product ?? {
     name: "",
     price: "",
@@ -89,6 +100,12 @@ export default function Product({ product, onChange }) {
           />
         </Cell>
       </div>
+      <SaveDeleteProduct
+        isSaved={isSaved}
+        showDelete={showDelete}
+        onSave={onSave}
+        onDelete={onDelete}
+      />
     </div>
   )
 }

@@ -25,4 +25,21 @@ public class ProductController {
     public Product create(@RequestBody Product product) {
         return products.save(product);
     }
+
+    @PutMapping("/{id}")
+    public Product update(@PathVariable Long id, @RequestBody Product updatedProduct) {
+        Product existingProduct = products.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        existingProduct.setShopId(updatedProduct.getShopId());
+        existingProduct.setName(updatedProduct.getName());
+        existingProduct.setPrice(updatedProduct.getPrice());
+        existingProduct.setStock(updatedProduct.getStock());
+
+        return products.save(existingProduct);
+    }
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        products.deleteById(id);
+    }
 }

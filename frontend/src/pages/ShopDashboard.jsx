@@ -3,10 +3,79 @@ import ToggleButton from "../components/ToggleButton"
 import Header from "../components/Header"
 import SearchBar from "../components/SearchBar"
 import Product from "../components/Product"
-
+import { useState, useEffect } from "react"
 
 export default function ShopDashboard() {
   const navigate = useNavigate()
+
+  const [products, setProducts] = useState([])
+
+  const [deleteMode, setDeleteMode] = useState(false)
+
+  useEffect(() => {
+    async function loadProducts() {
+      const response = await fetch("http://localhost:8080/api/products/shop/1")
+      const data = await response.json()
+
+      const formattedProducts = data.map((product) => ({
+        ...product,
+        tags: "",
+        imagesCount: "",
+        isSaved: true
+      }))
+
+      setProducts(formattedProducts)
+    }
+
+    loadProducts()
+  }, [])
+
+  const shopId = 1
+
+  async function handleSaveProduct(product, index) {
+    const productToSave = {
+      shopId: shopId,
+      name: product.name,
+      price: Number(product.price),
+      stock: Number(product.stock)
+    }
+
+    const isEditingExistingProduct = product.id != null
+
+    const response = await fetch(
+      isEditingExistingProduct
+        ? `http://localhost:8080/api/products/${product.id}`
+        : "http://localhost:8080/api/products",
+      {
+        method: isEditingExistingProduct ? "PUT" : "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(productToSave)
+      }
+    )
+
+    const savedProduct = await response.json()
+
+    const updatedProducts = [...products]
+    updatedProducts[index] = {
+      ...updatedProducts[index],
+      ...savedProduct,
+      isSaved: true
+    }
+    setProducts(updatedProducts)
+  }
+
+  async function handleDeleteProduct(product, index) {
+    if (product.id != null) {
+      await fetch(`http://localhost:8080/api/products/${product.id}`, {
+        method: "DELETE"
+      })
+    }
+
+    const updatedProducts = products.filter((_, i) => i !== index)
+    setProducts(updatedProducts)
+  }
 
   return (
     <div
@@ -159,12 +228,13 @@ export default function ShopDashboard() {
           {/* delete Button*/}
           <button
             type="button"
+            onClick={() => setDeleteMode(!deleteMode)}
             style={{
               width: 44,
               height: 44,
               borderRadius: 15,
               border: "1px solid #d1d5db",
-              backgroundColor: "#ffffff",
+              backgroundColor: deleteMode ? "#eef2ff" : "#ffffff",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -181,6 +251,20 @@ export default function ShopDashboard() {
 
           <button
             type="button"
+            onClick={() =>
+              setProducts([
+                ...products,
+                {
+                  shopId: 1,
+                  name: "",
+                  price: "",
+                  stock: "",
+                  tags: "",
+                  imagesCount: "",
+                  isSaved: false
+                }
+              ])
+            }
             style={{
               padding: "12px 35px",
               fontSize: 16,
@@ -191,7 +275,6 @@ export default function ShopDashboard() {
               cursor: "pointer",
               border: "none",
               whiteSpace: "nowrap"
-
             }}
           >
             Add Product
@@ -211,15 +294,24 @@ export default function ShopDashboard() {
 
 
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          <Product />
-          <Product />
-          <Product />
-          <Product />
-          <Product />
-          <Product />
-          <Product />
-          <Product />
-          <Product />
+          {products.map((product, index) => (
+            <Product
+              key={product.id ?? index}
+              product={product}
+              isSaved={product.isSaved}
+              showDelete={deleteMode}
+              onChange={(updatedProduct) => {
+                const updatedProducts = [...products]
+                updatedProducts[index] = {
+                  ...updatedProduct,
+                  isSaved: false,
+                }
+                setProducts(updatedProducts)
+              }}
+              onSave={() => handleSaveProduct(product, index)}
+              onDelete={() => handleDeleteProduct(product, index)}
+            />
+          ))}
         </div>
 
 
