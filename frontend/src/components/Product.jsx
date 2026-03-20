@@ -11,7 +11,15 @@ const inputStyle = {
   minWidth: 0
 }
 
-
+const popupButtonStyle = {
+  padding: "8px 55px",
+  borderRadius: 20,
+  border: "1px solid #d1d5db",
+  backgroundColor: "#ffffff",
+  cursor: "pointer",
+  fontSize: 14,
+  fontWeight: 500,
+}
 
 export default function Product({
   product,
@@ -19,15 +27,18 @@ export default function Product({
   isSaved,
   showDelete,
   onSave,
-  onDelete
+  onDelete,
+  onOpenTags,
+  onOpenImages
 }) {
 
   const safeProduct = product ?? {
     name: "",
     price: "",
     stock: "",
-    tags: "",
-    imagesCount: ""
+    categoryTags: [],
+    searchTags: [],
+    images: []
   }
 
   function update(field, value) {
@@ -36,7 +47,7 @@ export default function Product({
   }
 
   return (
-    <div style={{ width: "116%", display: "flex", alignItems: "center", gap: 16 }}>
+    <div style={{ width: "116%", display: "flex", alignItems: "center", gap: 30 }}>
       {/* LEFT: toggle */}
       <div style={{ width: 92, display: "flex", justifyContent: "center" }}>
         <ToggleButton />
@@ -52,7 +63,7 @@ export default function Product({
           display: "flex",
           alignItems: "center",
           backgroundColor: "#ffffff",
-          height: 56
+          height: 44
         }}
       >
         <Cell style={{ flex: 2 }}>
@@ -64,7 +75,7 @@ export default function Product({
           />
         </Cell>
 
-        <Cell divider style={{ flex: 1 }}>
+        <Cell divider style={{ flex: 2 }}>
           <input
             value={safeProduct.price}
             onChange={(e) => update("price", e.target.value)}
@@ -73,7 +84,7 @@ export default function Product({
           />
         </Cell>
 
-        <Cell divider style={{ flex: 1 }}>
+        <Cell divider style={{ flex: 2 }}>
           <input
             value={safeProduct.stock}
             onChange={(e) => update("stock", e.target.value)}
@@ -82,22 +93,24 @@ export default function Product({
           />
         </Cell>
 
-        <Cell divider style={{ flex: 2 }}>
-          <input
-            value={safeProduct.tags}
-            onChange={(e) => update("tags", e.target.value)}
-            style={inputStyle}
-            placeholder="Tags"
-          />
+        <Cell divider style={{ flex: 2, justifyContent: "center" }}>
+          <button
+            type="button"
+            onClick={onOpenTags}
+            style={popupButtonStyle}
+          >
+            Tags
+          </button>
         </Cell>
 
-        <Cell divider style={{ flex: 1.2, justifyContent: "center" }}>
-          <input
-            value={safeProduct.imagesCount}
-            onChange={(e) => update("imagesCount", e.target.value)}
-            style={{ ...inputStyle, textAlign: "center" }}
-            placeholder="Images"
-          />
+        <Cell divider style={{ flex: 2, justifyContent: "center" }}>
+          <button
+            type="button"
+            onClick={onOpenImages}
+            style={popupButtonStyle}
+          >
+            Images
+          </button>
         </Cell>
       </div>
       <SaveDeleteProduct

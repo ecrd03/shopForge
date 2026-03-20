@@ -3,6 +3,8 @@ import ToggleButton from "../components/ToggleButton"
 import Header from "../components/Header"
 import SearchBar from "../components/SearchBar"
 import Product from "../components/Product"
+import PopUp from "../components/PopUp"
+
 import { useState, useEffect } from "react"
 
 export default function ShopDashboard() {
@@ -12,6 +14,26 @@ export default function ShopDashboard() {
 
   const [deleteMode, setDeleteMode] = useState(false)
 
+  const [isPopUpOpen, setIsPopUpOpen] = useState(false)
+  const [popUpMode, setPopUpMode] = useState("")
+  const [activeProductIndex, setActiveProductIndex] = useState(null)
+  const [activeTagSection, setActiveTagSection] = useState("category")
+
+  const [allShopTags] = useState([
+    "JDM",
+    "Nissan",
+    "Toyota",
+    "Lexus",
+    "Honda",
+    "Mazda",
+    "Subaru",
+    "Streetwear",
+    "Sticker",
+    "Banner",
+    "Shirt",
+    "Hoodie"
+  ])
+
   useEffect(() => {
     async function loadProducts() {
       const response = await fetch("http://localhost:8080/api/products/shop/1")
@@ -19,8 +41,9 @@ export default function ShopDashboard() {
 
       const formattedProducts = data.map((product) => ({
         ...product,
-        tags: "",
-        imagesCount: "",
+        categoryTags: [],
+        searchTags: [],
+        images: [null, null, null, null, null, null],
         isSaved: true
       }))
 
@@ -76,6 +99,71 @@ export default function ShopDashboard() {
     const updatedProducts = products.filter((_, i) => i !== index)
     setProducts(updatedProducts)
   }
+
+  function openPopUp(mode, index) {
+    setPopUpMode(mode)
+    setActiveProductIndex(index)
+
+    if (mode === "tags") {
+      setActiveTagSection("category")
+    }
+
+    setIsPopUpOpen(true)
+  }
+
+  const activeProduct =
+    activeProductIndex !== null ? products[activeProductIndex] : null
+
+  function handleAddTag(tag) {
+    if (activeProductIndex === null) return
+
+    const updatedProducts = [...products]
+    const currentProduct = updatedProducts[activeProductIndex]
+
+    const currentTags =
+      activeTagSection === "category"
+        ? currentProduct.categoryTags
+        : currentProduct.searchTags
+
+    if (currentTags.includes(tag)) return
+
+    updatedProducts[activeProductIndex] = {
+      ...currentProduct,
+      [activeTagSection === "category" ? "categoryTags" : "searchTags"]: [...currentTags, tag],
+      isSaved: false
+    }
+
+    setProducts(updatedProducts)
+  }
+
+  function handleTagTextChange(value) {
+    if (activeProductIndex === null) return
+
+    const updatedProducts = [...products]
+    const currentProduct = updatedProducts[activeProductIndex]
+
+    const lines = value
+      .split("\n")
+      .map((line) => line.trim())
+      .filter((line) => line !== "")
+
+    updatedProducts[activeProductIndex] = {
+      ...currentProduct,
+      [activeTagSection === "category" ? "categoryTags" : "searchTags"]: lines,
+      isSaved: false
+    }
+
+    setProducts(updatedProducts)
+  }
+
+  const activeTagLines =
+    popUpMode === "tags" && activeProduct
+      ? activeTagSection === "category"
+        ? activeProduct.categoryTags
+        : activeProduct.searchTags
+      : []
+
+  const activeTagText = activeTagLines.join("\n")
 
   return (
     <div
@@ -248,7 +336,6 @@ export default function ShopDashboard() {
             />
           </button>
 
-
           <button
             type="button"
             onClick={() =>
@@ -259,8 +346,9 @@ export default function ShopDashboard() {
                   name: "",
                   price: "",
                   stock: "",
-                  tags: "",
-                  imagesCount: "",
+                  categoryTags: [],
+                  searchTags: [],
+                  images: [null, null, null, null, null, null],
                   isSaved: false
                 }
               ])
@@ -293,7 +381,7 @@ export default function ShopDashboard() {
         {/* product list */}
 
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           {products.map((product, index) => (
             <Product
               key={product.id ?? index}
@@ -310,6 +398,8 @@ export default function ShopDashboard() {
               }}
               onSave={() => handleSaveProduct(product, index)}
               onDelete={() => handleDeleteProduct(product, index)}
+              onOpenTags={() => openPopUp("tags", index)}
+              onOpenImages={() => openPopUp("images", index)}
             />
           ))}
         </div>
@@ -327,7 +417,155 @@ export default function ShopDashboard() {
       >
 
       </div>
+
+      <PopUp
+        isOpen={isPopUpOpen}
+        onClose={() => setIsPopUpOpen(false)}
+      >
+        {popUpMode === "tags" ? (
+          <div>
+            <h2 style={{ marginTop: 0, marginBottom: 18 }}>Tags</h2>
+
+            <div
+              style={{
+                display: "flex",
+                gap: 24,
+                alignItems: "flex-start"
+              }}
+            >
+              {/* left side */}
+              <div style={{ width: 185, flexShrink: 0 }}>
+                <h3 style={{ marginTop: 0, fontSize: 16, marginBottom: 12 }}>
+                  All Shop Tags
+                </h3>
+
+                <div style={tagListBoxStyle}>
+                  {allShopTags.map((tag) => (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => handleAddTag(`#${tag}`)}
+                      style={listTagButtonStyle}
+                    >
+                      #{tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* right side */}
+              <div style={{ flex: 1 }}>
+                <div style={tagTabsBarStyle}>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTagSection("category")}
+                    style={{
+                      ...tagTabStyle,
+                      ...(activeTagSection === "category"
+                        ? tagTabActiveStyle
+                        : tagTabInactiveStyle)
+                    }}
+                  >
+                    CATEGORY
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveTagSection("search")}
+                    style={{
+                      ...tagTabStyle,
+                      ...(activeTagSection === "search"
+                        ? tagTabActiveStyle
+                        : tagTabInactiveStyle)
+                    }}
+                  >
+                    SEARCH
+                  </button>
+                </div>
+
+                <textarea
+                  value={activeTagText}
+                  onChange={(e) => handleTagTextChange(e.target.value)}
+                  placeholder={"#is300\n#nissan_240z\n#jdm"}
+                  style={tagTextAreaStyle}
+                />
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <h2 style={{ marginTop: 0 }}>Images</h2>
+            <p>Image popup UI comes next.</p>
+          </div>
+        )}
+      </PopUp>
+
     </div>
 
   )
+}
+
+const tagListBoxStyle = {
+  border: "1px solid #7b8691",
+  backgroundColor: "#ffffff",
+  minHeight: 330,
+  padding: 0,
+  display: "flex",
+  flexDirection: "column",
+  overflow: "hidden"
+}
+
+const listTagButtonStyle = {
+  width: "100%",
+  padding: "12px 14px",
+  border: "none",
+  borderBottom: "1px solid #d7dce1",
+  backgroundColor: "#ffffff",
+  cursor: "pointer",
+  fontSize: 14,
+  textAlign: "left"
+}
+
+const tagTabsBarStyle = {
+  display: "flex",
+  alignItems: "flex-end",
+  gap: 0,
+  marginBottom: 0
+}
+
+const tagTabStyle = {
+  padding: "12px 22px",
+  border: "1px solid #7b8691",
+  borderBottom: "none",
+  cursor: "pointer",
+  fontSize: 13,
+  fontWeight: 700,
+  backgroundColor: "transparent",
+  minWidth: 120
+}
+
+const tagTabInactiveStyle = {
+  backgroundColor: "#5f6872",
+  color: "#f1c46a"
+}
+
+const tagTabActiveStyle = {
+  backgroundColor: "#f3f3f3",
+  color: "#1f3b5b",
+  position: "relative",
+  top: 1
+}
+
+const tagTextAreaStyle = {
+  width: "100%",
+  minHeight: 330,
+  border: "1px solid #7b8691",
+  backgroundColor: "#ffffff",
+  padding: 14,
+  fontSize: 14,
+  resize: "none",
+  outline: "none",
+  boxSizing: "border-box",
+  fontFamily: "inherit",
+  borderRadius: 0
 }
