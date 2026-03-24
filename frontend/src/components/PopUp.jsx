@@ -1,4 +1,4 @@
-export default function PopUp({ isOpen, onClose, children }) {
+export default function PopUp({ isOpen, onClose, children, productName }) {
   if (!isOpen) return null
 
   return (
@@ -8,11 +8,23 @@ export default function PopUp({ isOpen, onClose, children }) {
           ✕
         </button>
 
-        <div style={contentStyle}>
-          {children}
+        <div style={contentWrapperStyle}>
+          <div style={contentStyle}>
+            {children}
+          </div>
         </div>
 
         <div style={footerStyle}>
+          <div style={productNameWrapStyle}>
+            <div style={productNameTextStyle}>
+              {productName
+                ? (productName.length > 22
+                  ? productName.slice(0, 22) + "..."
+                  : productName)
+                : "No product"}
+            </div>
+          </div>
+
           <button style={saveButtonStyle}>Save</button>
         </div>
       </div>
@@ -41,7 +53,9 @@ const popupStyle = {
   borderRadius: 4,
   position: "relative",
   boxSizing: "border-box",
-  padding: "24px"
+  padding: "24px",
+  display: "flex",
+  flexDirection: "column"
 }
 
 const contentStyle = {
@@ -51,7 +65,14 @@ const contentStyle = {
 const footerStyle = {
   marginTop: 24,
   display: "flex",
-  justifyContent: "flex-end"
+  alignItems: "center",
+  justifyContent: "space-between",
+  gap: 16
+}
+
+const productNameWrapStyle = {
+  flex: 1,
+  minWidth: 0
 }
 
 const closeStyle = {
@@ -74,4 +95,20 @@ const saveButtonStyle = {
   fontSize: 16,
   fontWeight: 600,
   cursor: "pointer"
+}
+
+const contentWrapperStyle = {
+  display: "flex",
+  flexDirection: "column",
+  height: "100%"
+}
+
+const productNameTextStyle = {
+  fontSize: 25,
+  fontWeight: 600,
+  color: "#271311",
+
+  whiteSpace: "nowrap",
+  overflow: "hidden",
+  textOverflow: "ellipsis"
 }
