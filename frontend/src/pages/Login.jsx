@@ -21,14 +21,14 @@ export default function Login() {
       })
 
       if (!res.ok) {
-        // backend might return text or json, keep it simple
         throw new Error("Invalid email or password")
       }
 
       const user = await res.json()
       console.log("login ok:", user)
 
-      // for now, just route by role
+      localStorage.setItem("user", JSON.stringify(user))
+
       if (user.role === "ADMIN") navigate("/admin")
       else navigate("/shop")
     } catch (e) {

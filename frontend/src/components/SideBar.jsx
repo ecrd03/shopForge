@@ -6,6 +6,11 @@ export default function SideBar({
   user = { name: "Name", avatarUrl: "" },
   onSignOut
 }) {
+  function formatName(name) {
+    if (!name) return "Name"
+    return name.length > 25 ? name.slice(0, 20) + "..." : name
+  }
+
   // close on ESC
   useEffect(() => {
     if (!open) return
@@ -87,8 +92,18 @@ export default function SideBar({
           </div>
 
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontSize: 16, fontWeight: 600, lineHeight: "20px" }}>
-              {user.name || "Name"}
+            <div
+              style={{
+                fontSize: 16,
+                fontWeight: 600,
+                lineHeight: "20px",
+                maxWidth: 180,
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis"
+              }}
+            >
+              {formatName(user.name)}
             </div>
             <div style={{ fontSize: 12, color: "#6b7280" }}>
               Account

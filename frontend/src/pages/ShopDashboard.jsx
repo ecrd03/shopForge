@@ -22,6 +22,12 @@ export default function ShopDashboard() {
   const [activeTagSection, setActiveTagSection] = useState("category")
   const [tagInput, setTagInput] = useState("")
 
+  const user = JSON.parse(localStorage.getItem("user"))
+  const shopId = user?.shopId
+
+  const [shop, setShop] = useState(null)
+  const [loadingShop, setLoadingShop] = useState(true)
+
   const [allShopTags] = useState([
     "JDM",
     "Nissan",
@@ -39,7 +45,8 @@ export default function ShopDashboard() {
 
   useEffect(() => {
     async function loadProducts() {
-      const response = await fetch("http://localhost:8080/api/products/shop/1")
+      if (!shopId) return
+      const response = await fetch(`http://localhost:8080/api/products/shop/${shopId}`)
       const data = await response.json()
 
       const formattedProducts = data.map((product) => ({
@@ -56,7 +63,30 @@ export default function ShopDashboard() {
     loadProducts()
   }, [])
 
-  const shopId = 1
+  useEffect(() => {
+    async function loadShop() {
+      if (!shopId) {
+        setLoadingShop(false)
+        return
+      }
+
+      try {
+        const response = await fetch(`http://localhost:8080/api/shops/${shopId}`)
+        if (!response.ok) {
+          throw new Error("Failed to load shop")
+        }
+
+        const data = await response.json()
+        setShop(data)
+      } catch (error) {
+        console.error("Error loading shop:", error)
+      } finally {
+        setLoadingShop(false)
+      }
+    }
+
+    loadShop()
+  }, [shopId])
 
   async function handleSaveProduct(product, index) {
     const productToSave = {
@@ -241,9 +271,13 @@ export default function ShopDashboard() {
     >
       <Header
         name="Shop Dashboard"
-        user={{ name: "Eric Shop Profile", avatarUrl: "" }}
+        user={{
+          name: user?.name || user?.email || "Profile",
+          avatarUrl: shop?.logoUrl || ""
+        }}
         onSignOut={() => {
           localStorage.removeItem("token")
+          localStorage.removeItem("user")
           navigate("/login")
         }}
       />
@@ -267,15 +301,29 @@ export default function ShopDashboard() {
           }}
         >
           {/* icon image*/}
-          <div
-            style={{
-              width: 120,
-              height: 120,
-              borderRadius: "50%",
-              backgroundColor: "#8c5ddd",
-              flexShrink: 0
-            }}
-          />
+          {shop?.logoUrl ? (
+            <img
+              src={shop.logoUrl}
+              alt={shop?.name || "Shop logo"}
+              style={{
+                width: 120,
+                height: 120,
+                borderRadius: "50%",
+                objectFit: "cover",
+                flexShrink: 0
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                width: 120,
+                height: 120,
+                borderRadius: "50%",
+                backgroundColor: "#8c5ddd",
+                flexShrink: 0
+              }}
+            />
+          )}
           {/* Shop Name*/}
           <span
             style={{
@@ -284,7 +332,7 @@ export default function ShopDashboard() {
               whiteSpace: "nowrap"
             }}
           >
-            RedLine Apparels
+            {loadingShop ? "Loading..." : shop?.name || "My Shop"}
           </span>
         </div>
 
@@ -404,7 +452,7 @@ export default function ShopDashboard() {
               setProducts([
                 ...products,
                 {
-                  shopId: 1,
+                  shopId: shopId,
                   name: "",
                   price: "",
                   stock: "",

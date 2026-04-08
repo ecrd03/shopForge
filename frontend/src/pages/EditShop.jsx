@@ -7,7 +7,8 @@ import { useNavigate } from "react-router-dom"
 
 export default function EditShop() {
   const navigate = useNavigate()
-  const shopId = 1
+  const user = JSON.parse(localStorage.getItem("user"))
+  const shopId = user?.shopId
 
   const [shopName, setShopName] = useState("")
   const [description, setDescription] = useState("")
@@ -29,6 +30,12 @@ export default function EditShop() {
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState("")
 
+  useEffect(() => {
+    if (!user) {
+      navigate("/")
+    }
+  }, [user, navigate])
+
   function updateLink(platform, field, newValue) {
     setLinks((prev) => ({
       ...prev,
@@ -41,6 +48,11 @@ export default function EditShop() {
 
   useEffect(() => {
     async function fetchShop() {
+      if (!shopId) {
+        setLoading(false)
+        return
+      }
+
       try {
         const response = await fetch(`http://localhost:8080/api/shops/${shopId}`)
         if (!response.ok) {
@@ -148,6 +160,8 @@ export default function EditShop() {
     setMessage("Changes were discarded.")
   }
 
+  if (!user) return null
+
   if (loading) {
     return <div style={{ padding: 24 }}>Loading shop...</div>
   }
@@ -166,10 +180,14 @@ export default function EditShop() {
     >
       <Header
         name="Edit Shop Profile"
-        user={{ name: "Eric Shop Profile", avatarUrl: "" }}
+        user={{
+          name: user?.email || "Profile",
+          avatarUrl: ""
+        }}
         onSignOut={() => {
           localStorage.removeItem("token")
-          navigate("/login")
+          localStorage.removeItem("user")
+          navigate("/")
         }}
       />
 
@@ -331,9 +349,7 @@ export default function EditShop() {
               value={links.instagram.value}
               onChange={(value) => updateLink("instagram", "value", value)}
               enabled={links.instagram.enabled}
-              onToggleChange={(enabled) =>
-                updateLink("instagram", "enabled", enabled)
-              }
+              onToggleChange={(enabled) => updateLink("instagram", "enabled", enabled)}
             />
 
             <InputBox
@@ -342,9 +358,7 @@ export default function EditShop() {
               value={links.facebook.value}
               onChange={(value) => updateLink("facebook", "value", value)}
               enabled={links.facebook.enabled}
-              onToggleChange={(enabled) =>
-                updateLink("facebook", "enabled", enabled)
-              }
+              onToggleChange={(enabled) => updateLink("facebook", "enabled", enabled)}
             />
 
             <InputBox
@@ -353,9 +367,7 @@ export default function EditShop() {
               value={links.twitter.value}
               onChange={(value) => updateLink("twitter", "value", value)}
               enabled={links.twitter.enabled}
-              onToggleChange={(enabled) =>
-                updateLink("twitter", "enabled", enabled)
-              }
+              onToggleChange={(enabled) => updateLink("twitter", "enabled", enabled)}
             />
 
             <InputBox
@@ -364,9 +376,7 @@ export default function EditShop() {
               value={links.tiktok.value}
               onChange={(value) => updateLink("tiktok", "value", value)}
               enabled={links.tiktok.enabled}
-              onToggleChange={(enabled) =>
-                updateLink("tiktok", "enabled", enabled)
-              }
+              onToggleChange={(enabled) => updateLink("tiktok", "enabled", enabled)}
             />
 
             <InputBox
@@ -375,9 +385,7 @@ export default function EditShop() {
               value={links.etsy.value}
               onChange={(value) => updateLink("etsy", "value", value)}
               enabled={links.etsy.enabled}
-              onToggleChange={(enabled) =>
-                updateLink("etsy", "enabled", enabled)
-              }
+              onToggleChange={(enabled) => updateLink("etsy", "enabled", enabled)}
             />
 
             <InputBox
@@ -386,9 +394,7 @@ export default function EditShop() {
               value={links.shopify.value}
               onChange={(value) => updateLink("shopify", "value", value)}
               enabled={links.shopify.enabled}
-              onToggleChange={(enabled) =>
-                updateLink("shopify", "enabled", enabled)
-              }
+              onToggleChange={(enabled) => updateLink("shopify", "enabled", enabled)}
             />
 
             <InputBox
@@ -397,9 +403,7 @@ export default function EditShop() {
               value={links.depop.value}
               onChange={(value) => updateLink("depop", "value", value)}
               enabled={links.depop.enabled}
-              onToggleChange={(enabled) =>
-                updateLink("depop", "enabled", enabled)
-              }
+              onToggleChange={(enabled) => updateLink("depop", "enabled", enabled)}
             />
 
             <InputBox
@@ -408,9 +412,7 @@ export default function EditShop() {
               value={links.ebay.value}
               onChange={(value) => updateLink("ebay", "value", value)}
               enabled={links.ebay.enabled}
-              onToggleChange={(enabled) =>
-                updateLink("ebay", "enabled", enabled)
-              }
+              onToggleChange={(enabled) => updateLink("ebay", "enabled", enabled)}
             />
           </div>
         </div>
