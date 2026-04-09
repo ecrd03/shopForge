@@ -19,6 +19,11 @@ export default function Settings() {
   async function handleSave() {
     setMessage("")
 
+    if (!user?.id) {
+      setMessage("User not found")
+      return
+    }
+
     if (password && password !== confirmPassword) {
       setMessage("Passwords do not match")
       return
@@ -27,30 +32,47 @@ export default function Settings() {
     try {
       setSaving(true)
 
+      const profileResponse = await fetch(`http://localhost:8080/api/users/${user.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          username,
+          email,
+          phone
+        })
+      })
+
+      const profileData = await profileResponse.json()
+
+      if (!profileResponse.ok) {
+        setMessage(profileData.error || "Failed to update profile")
+        return
+      }
+
       const updatedUser = {
         ...user,
-        username,
-        email,
-        phone
+        ...profileData
       }
 
       localStorage.setItem("user", JSON.stringify(updatedUser))
 
       if (password.trim()) {
-        const response = await fetch(`http://localhost:8080/api/users/${user.id}/password`, {
+        const passwordResponse = await fetch(`http://localhost:8080/api/users/${user.id}/password`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            password: password
+            password
           })
         })
 
-        const data = await response.json()
+        const passwordData = await passwordResponse.json()
 
-        if (!response.ok) {
-          setMessage(data.error || "Failed to update password")
+        if (!passwordResponse.ok) {
+          setMessage(passwordData.error || "Failed to update password")
           return
         }
       }
