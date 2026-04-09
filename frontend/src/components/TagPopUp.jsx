@@ -104,7 +104,7 @@ export default function TagPopUp({
               value={tagInput}
               onChange={(e) => setTagInput(e.target.value)}
               onKeyDown={onTagInputKeyDown}
-              placeholder="#is300"
+              placeholder="#Tag"
               style={tagInlineInputStyle}
             />
           </div>

@@ -25,7 +25,6 @@ export default function PopUp({ isOpen, onClose, children, productName }) {
             </div>
           </div>
 
-          <button style={saveButtonStyle}>Save</button>
         </div>
       </div>
     </div>
@@ -50,7 +49,7 @@ const popupStyle = {
   width: "780px",
   minHeight: "560px",
   border: "1px solid #7f8892",
-  borderRadius: 4,
+  borderRadius: 25,
   position: "relative",
   boxSizing: "border-box",
   padding: "24px",

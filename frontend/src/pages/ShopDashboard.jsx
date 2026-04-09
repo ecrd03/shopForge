@@ -28,20 +28,7 @@ export default function ShopDashboard() {
   const [shop, setShop] = useState(null)
   const [loadingShop, setLoadingShop] = useState(true)
 
-  const [allShopTags] = useState([
-    "JDM",
-    "Nissan",
-    "Toyota",
-    "Lexus",
-    "Honda",
-    "Mazda",
-    "Subaru",
-    "Streetwear",
-    "Sticker",
-    "Banner",
-    "Shirt",
-    "Hoodie"
-  ])
+  const [allShopTags, setAllShopTags] = useState([])
 
   useEffect(() => {
     async function loadProducts() {
@@ -51,11 +38,20 @@ export default function ShopDashboard() {
 
       const formattedProducts = data.map((product) => ({
         ...product,
-        categoryTags: [],
-        searchTags: [],
+        categoryTags: product.categoryTags || [],
+        searchTags: product.searchTags || [],
         images: [],
         isSaved: true
       }))
+
+      const tagSet = new Set()
+
+      formattedProducts.forEach((product) => {
+        ; (product.categoryTags || []).forEach((tag) => tagSet.add(tag))
+          ; (product.searchTags || []).forEach((tag) => tagSet.add(tag))
+      })
+
+      setAllShopTags(Array.from(tagSet))
 
       setProducts(formattedProducts)
     }
@@ -93,7 +89,9 @@ export default function ShopDashboard() {
       shopId: shopId,
       name: product.name,
       price: Number(product.price),
-      stock: Number(product.stock)
+      stock: Number(product.stock),
+      categoryTags: product.categoryTags || [],
+      searchTags: product.searchTags || []
     }
 
     const isEditingExistingProduct = product.id != null
@@ -155,6 +153,14 @@ export default function ShopDashboard() {
         ? activeProduct.categoryTags
         : activeProduct.searchTags
       : []
+  const activeProductUsedTags =
+    activeProduct
+      ? [...(activeProduct.categoryTags || []), ...(activeProduct.searchTags || [])]
+      : []
+
+  const availableShopTags = allShopTags.filter(
+    (tag) => !activeProductUsedTags.includes(tag)
+  )
 
   function normalizeTag(tag) {
     return tag
@@ -173,23 +179,25 @@ export default function ShopDashboard() {
     const updatedProducts = [...products]
     const currentProduct = updatedProducts[activeProductIndex]
 
-    const currentTags =
-      activeTagSection === "category"
-        ? currentProduct.categoryTags
-        : currentProduct.searchTags
+    const tagField =
+      activeTagSection === "category" ? "categoryTags" : "searchTags"
 
-    if (currentTags.includes(cleanedTag)) return
+    const currentTags = currentProduct[tagField] || []
 
-    updatedProducts[activeProductIndex] = {
-      ...currentProduct,
-      [activeTagSection === "category" ? "categoryTags" : "searchTags"]: [
-        ...currentTags,
-        cleanedTag
-      ],
-      isSaved: false
+    if (!currentTags.includes(cleanedTag)) {
+      updatedProducts[activeProductIndex] = {
+        ...currentProduct,
+        [tagField]: [...currentTags, cleanedTag],
+        isSaved: false
+      }
+
+      setProducts(updatedProducts)
     }
 
-    setProducts(updatedProducts)
+    setAllShopTags((prev) => {
+      if (prev.includes(cleanedTag)) return prev
+      return [...prev, cleanedTag]
+    })
   }
 
   function handleRemoveTag(tagToRemove) {
@@ -535,7 +543,7 @@ export default function ShopDashboard() {
       >
         {popUpMode === "tags" ? (
           <TagPopUp
-            allShopTags={allShopTags}
+            allShopTags={availableShopTags}
             activeTagSection={activeTagSection}
             setActiveTagSection={setActiveTagSection}
             activeTagLines={activeTagLines}
