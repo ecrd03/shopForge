@@ -22,6 +22,17 @@ public class Shop {
     @Column(name = "owner_id", nullable = false)
     private Long ownerId;
 
+    private String username;
+
+    @Column(name = "contact_name")
+    private String contactName;
+
+    @Column(name = "contact_email")
+    private String contactEmail;
+
+    @Column(name = "contact_phone")
+    private String contactPhone;
+
     private String theme;
 
     private String instagramUrl;
@@ -39,6 +50,11 @@ public class Shop {
     public String getLogoUrl() { return logoUrl; }
     public Long getOwnerId() { return ownerId; }
     public String getTheme() { return theme; }
+
+    public String getUsername() { return username; }
+    public String getContactName() { return contactName; }
+    public String getContactEmail() { return contactEmail; }
+    public String getContactPhone() { return contactPhone; }
 
     public String getInstagramUrl() { return instagramUrl; }
     public String getFacebookUrl() { return facebookUrl; }

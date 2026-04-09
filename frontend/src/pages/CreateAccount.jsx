@@ -17,8 +17,8 @@ export default function CreateAccount() {
     async function handleCreateAccount() {
         setError("")
 
-        if (!email.trim() || !password.trim() || !confirmPassword.trim()) {
-            setError("Email and password are required")
+        if (!name.trim() || !email.trim() || !password.trim()) {
+            setError("All fields are required")
             return
         }
 
@@ -36,7 +36,9 @@ export default function CreateAccount() {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
+                    username: name.trim(),
                     email: email.trim(),
+                    phone: number.trim(),
                     password: password
                 })
             })
@@ -152,16 +154,6 @@ export default function CreateAccount() {
 
                     <div style={{ width: "100%", margin: "10px 0", marginLeft: 95 }}>
                         <Divider />
-                    </div>
-
-                    <div style={rowStyle}>
-                        <span style={labelStyle}>User Name</span>
-                        <input
-                            type="text"
-                            style={inputStyle}
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                        />
                     </div>
 
                     <div style={rowStyle}>

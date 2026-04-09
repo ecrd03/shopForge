@@ -26,16 +26,26 @@ public class User {
     @Column(nullable = false)
     private boolean active = true;
 
+    @Column(nullable = false, unique = true)
+    private String username;
+
+    @Column
+    private String phone;
+
     public Long getId() { return id; }
     public String getEmail() { return email; }
     public String getPasswordHash() { return passwordHash; }
     public Role getRole() { return role; }
     public Long getShopId() { return shopId; }
     public boolean isActive() { return active; }
+    public String getUsername() { return username; }
+    public String getPhone() { return phone; }
 
     public void setEmail(String email) { this.email = email; }
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
     public void setRole(Role role) { this.role = role; }
     public void setShopId(Long shopId) { this.shopId = shopId; }
     public void setActive(boolean active) { this.active = active; }
+    public void setUsername(String username) { this.username = username; }
+    public void setPhone(String phone) { this.phone = phone; }
 }

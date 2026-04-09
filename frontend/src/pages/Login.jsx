@@ -27,6 +27,7 @@ export default function Login() {
       const user = await res.json()
       console.log("login ok:", user)
 
+      localStorage.setItem("token", "logged-in")
       localStorage.setItem("user", JSON.stringify(user))
 
       if (user.role === "ADMIN") navigate("/admin")

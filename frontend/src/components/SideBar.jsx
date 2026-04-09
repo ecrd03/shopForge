@@ -1,4 +1,5 @@
 import { useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 
 export default function SideBar({
   open,
@@ -6,6 +7,8 @@ export default function SideBar({
   user = { name: "Name", avatarUrl: "" },
   onSignOut
 }) {
+  const navigate = useNavigate()
+
   function formatName(name) {
     if (!name) return "Name"
     return name.length > 25 ? name.slice(0, 20) + "..." : name
@@ -131,7 +134,30 @@ export default function SideBar({
         <div style={{ padding: 20, flex: 1 }} />
 
         {/* bottom */}
-        <div style={{ padding: 20, borderTop: "1px solid #eee" }}>
+        <div
+          style={{
+            padding: 20,
+            borderTop: "1px solid #eee",
+            display: "flex",
+            flexDirection: "column",
+            gap: 10
+          }}
+        >
+          <button
+            onClick={() => navigate("/settings")}
+            style={{
+              width: "100%",
+              padding: "12px 14px",
+              borderRadius: 999,
+              border: "1px solid #e5e7eb",
+              backgroundColor: "#fff",
+              cursor: "pointer",
+              fontWeight: 600
+            }}
+          >
+            Settings
+          </button>
+
           <button
             onClick={onSignOut}
             style={{

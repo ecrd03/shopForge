@@ -28,19 +28,30 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Map<String, String> body) {
+        String username = body.getOrDefault("username", "").trim();
         String email = body.getOrDefault("email", "").trim();
+        String phone = body.getOrDefault("phone", "").trim();
         String password = body.getOrDefault("password", "");
 
-        if (email.isEmpty() || password.isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("error", "email and password are required"));
+        if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "username, email, and password are required"));
         }
 
         if (users.findByEmail(email).isPresent()) {
             return ResponseEntity.badRequest().body(Map.of("error", "email already exists"));
         }
 
+        boolean usernameExists = users.findAll().stream()
+                .anyMatch(user -> user.getUsername() != null && user.getUsername().equalsIgnoreCase(username));
+
+        if (usernameExists) {
+            return ResponseEntity.badRequest().body(Map.of("error", "username already exists"));
+        }
+
         User user = new User();
+        user.setUsername(username);
         user.setEmail(email);
+        user.setPhone(phone);
         user.setPasswordHash(encoder.encode(password));
         user.setRole(Role.SHOP_OWNER);
         user.setActive(true);
@@ -69,7 +80,9 @@ public class AuthController {
 
         Map<String, Object> resp = new LinkedHashMap<>();
         resp.put("id", savedUser.getId());
+        resp.put("username", savedUser.getUsername());
         resp.put("email", savedUser.getEmail());
+        resp.put("phone", savedUser.getPhone());
         resp.put("role", savedUser.getRole() == null ? null : savedUser.getRole().name());
         resp.put("shopId", savedShop.getId());
 
@@ -88,7 +101,9 @@ public class AuthController {
 
         Map<String, Object> resp = new LinkedHashMap<>();
         resp.put("id", user.getId());
+        resp.put("username", user.getUsername());
         resp.put("email", user.getEmail());
+        resp.put("phone", user.getPhone());
         resp.put("role", user.getRole() == null ? null : user.getRole().name());
         resp.put("shopId", user.getShopId());
 

@@ -5,7 +5,8 @@ import ShopDashboard from "./pages/ShopDashboard"
 import CreateAccount from "./pages/CreateAccount"
 import EditShop from "./pages/EditShop"
 import ShopProfileCard from "./pages/ShopProfileCard"
-
+import ProtectedRoute from "./components/ProtectedRoute"
+import Settings from "./pages/Settings"
 
 export default function App() {
   return (
@@ -13,10 +14,52 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/createAccount" element={<CreateAccount />} />
-        <Route path="/admin" element={<AdminDashboard />} /> 
-        <Route path="/ShopProfileCard" element={<ShopProfileCard />} />
-        <Route path="/shop" element={<ShopDashboard />} />
-        <Route path="/editShopProfile" element={<EditShop />} />
+
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRole="ADMIN">
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/profilecard"
+          element={
+            <ProtectedRoute allowedRole="ADMIN">
+              <ShopProfileCard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/shop"
+          element={
+            <ProtectedRoute allowedRole="SHOP_OWNER">
+              <ShopDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/editShopProfile"
+          element={
+            <ProtectedRoute allowedRole="SHOP_OWNER">
+              <EditShop />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <Settings />
+            </ProtectedRoute>
+          }
+        />
+
         <Route path="*" element={<div style={{ padding: 24 }}>not found</div>} />
       </Routes>
     </BrowserRouter>

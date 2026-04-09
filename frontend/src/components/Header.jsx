@@ -10,6 +10,7 @@ export default function Header({ name, user }) {
 
   function signOut() {
     localStorage.removeItem("token")
+    localStorage.removeItem("user")
     setSideOpen(false)
     navigate("/")
   }
