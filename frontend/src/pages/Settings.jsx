@@ -146,32 +146,39 @@ export default function Settings() {
 
         <div style={{ display: "flex", gap: 12 }}>
           <button
+            type="button"
             onClick={() => navigate(-1)}
             style={{
-              padding: "10px 20px",
-              borderRadius: 999,
-              border: "1px solid #ccc",
-              backgroundColor: "#fff",
-              cursor: "pointer"
+              padding: "12px 30px",
+              fontSize: 18,
+              backgroundColor: "#f1f1f1",
+              color: "#111",
+              borderRadius: 50,
+              fontWeight: 600,
+              cursor: "pointer",
+              border: "1px solid #ddd"
             }}
           >
             Back
           </button>
 
           <button
+            type="button"
             onClick={handleSave}
             disabled={saving}
             style={{
-              padding: "10px 20px",
-              borderRadius: 999,
-              border: "none",
+              padding: "12px 35px",
+              fontSize: 18,
               backgroundColor: "#1c85fd",
-              color: "#fff",
-              cursor: "pointer",
+              color: "#ffffff",
+              borderRadius: 50,
+              fontWeight: 620,
+              cursor: saving ? "default" : "pointer",
+              border: "none",
               opacity: saving ? 0.7 : 1
             }}
           >
-            {saving ? "Saving..." : "Save"}
+            {saving ? "Saving..." : "Save "}
           </button>
         </div>
       </div>
