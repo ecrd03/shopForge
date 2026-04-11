@@ -4,13 +4,13 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class ProductSaveRequest {
-
     private Long shopId;
     private String name;
     private BigDecimal price;
     private Integer stock;
     private List<String> categoryTags;
     private List<String> searchTags;
+    private List<String> images;
 
     public Long getShopId() { return shopId; }
     public String getName() { return name; }
@@ -18,6 +18,7 @@ public class ProductSaveRequest {
     public Integer getStock() { return stock; }
     public List<String> getCategoryTags() { return categoryTags; }
     public List<String> getSearchTags() { return searchTags; }
+    public List<String> getImages() { return images; }
 
     public void setShopId(Long shopId) { this.shopId = shopId; }
     public void setName(String name) { this.name = name; }
@@ -25,4 +26,5 @@ public class ProductSaveRequest {
     public void setStock(Integer stock) { this.stock = stock; }
     public void setCategoryTags(List<String> categoryTags) { this.categoryTags = categoryTags; }
     public void setSearchTags(List<String> searchTags) { this.searchTags = searchTags; }
+    public void setImages(List<String> images) { this.images = images; }
 }

@@ -40,7 +40,11 @@ export default function ShopDashboard() {
         ...product,
         categoryTags: product.categoryTags || [],
         searchTags: product.searchTags || [],
-        images: [],
+        images: (product.images || []).map((url, index) => ({
+          id: `${product.id || "product"}-image-${index}`,
+          preview: url,
+          url
+        })),
         isSaved: true
       }))
 
@@ -91,7 +95,8 @@ export default function ShopDashboard() {
       price: Number(product.price),
       stock: Number(product.stock),
       categoryTags: product.categoryTags || [],
-      searchTags: product.searchTags || []
+      searchTags: product.searchTags || [],
+      images: (product.images || []).map((image) => image.url || image.preview)
     }
 
     const isEditingExistingProduct = product.id != null
@@ -115,8 +120,14 @@ export default function ShopDashboard() {
     updatedProducts[index] = {
       ...updatedProducts[index],
       ...savedProduct,
+      images: (savedProduct.images || productToSave.images).map((url, imageIndex) => ({
+        id: `${savedProduct.id || index}-image-${imageIndex}`,
+        preview: url,
+        url
+      })),
       isSaved: true
     }
+
     setProducts(updatedProducts)
   }
 

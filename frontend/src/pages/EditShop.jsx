@@ -1,18 +1,22 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Divider from "../components/divider"
 import Header from "../components/Header"
 import InputBox from "../components/InputBox"
 import Theme from "../components/Theme"
 import { useNavigate } from "react-router-dom"
+import { storage } from "../firebase"
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
 
 export default function EditShop() {
   const navigate = useNavigate()
   const user = JSON.parse(localStorage.getItem("user"))
   const shopId = user?.shopId
+  const fileInputRef = useRef(null)
 
   const [shopName, setShopName] = useState("")
   const [description, setDescription] = useState("")
   const [selectedTheme, setSelectedTheme] = useState("Theme1")
+  const [logoUrl, setLogoUrl] = useState("")
   const [originalShop, setOriginalShop] = useState(null)
 
   const [links, setLinks] = useState({
@@ -28,6 +32,7 @@ export default function EditShop() {
 
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [uploadingLogo, setUploadingLogo] = useState(false)
   const [message, setMessage] = useState("")
 
   useEffect(() => {
@@ -64,6 +69,7 @@ export default function EditShop() {
         setShopName(data.name || "")
         setDescription(data.description || "")
         setSelectedTheme(data.theme || "Theme1")
+        setLogoUrl(data.logoUrl || "")
 
         const loadedLinks = {
           instagram: { enabled: true, value: data.instagramUrl || "" },
@@ -82,6 +88,7 @@ export default function EditShop() {
           name: data.name || "",
           description: data.description || "",
           theme: data.theme || "Theme1",
+          logoUrl: data.logoUrl || "",
           links: loadedLinks
         })
       } catch (error) {
@@ -94,6 +101,40 @@ export default function EditShop() {
 
     fetchShop()
   }, [shopId])
+
+  function handleOpenLogoPicker() {
+    if (uploadingLogo) return
+    fileInputRef.current?.click()
+  }
+
+  async function handleLogoChange(e) {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    try {
+      setUploadingLogo(true)
+      setMessage("")
+
+      const imageRef = ref(storage, `shop-logos/${shopId}-${Date.now()}-${file.name}`)
+      await uploadBytes(imageRef, file)
+      const url = await getDownloadURL(imageRef)
+
+      setLogoUrl(url)
+      setMessage("Logo uploaded. Click Save Changes to keep it.")
+    } catch (error) {
+      console.error("Logo upload failed:", error)
+      setMessage("Logo upload failed.")
+    } finally {
+      setUploadingLogo(false)
+      e.target.value = ""
+    }
+  }
+
+  function handleRemoveLogo(e) {
+    e.stopPropagation()
+    setLogoUrl("")
+    setMessage("Logo removed. Click Save Changes to keep it.")
+  }
 
   async function handleSave() {
     setSaving(true)
@@ -109,7 +150,7 @@ export default function EditShop() {
           name: shopName,
           description,
           theme: selectedTheme,
-          logoUrl: "",
+          logoUrl: logoUrl,
           instagramUrl: links.instagram.enabled ? links.instagram.value : "",
           facebookUrl: links.facebook.enabled ? links.facebook.value : "",
           twitterUrl: links.twitter.enabled ? links.twitter.value : "",
@@ -131,6 +172,7 @@ export default function EditShop() {
         name: shopName,
         description,
         theme: selectedTheme,
+        logoUrl,
         links: {
           instagram: { ...links.instagram },
           facebook: { ...links.facebook },
@@ -156,6 +198,7 @@ export default function EditShop() {
     setShopName(originalShop.name)
     setDescription(originalShop.description)
     setSelectedTheme(originalShop.theme)
+    setLogoUrl(originalShop.logoUrl || "")
     setLinks(originalShop.links)
     setMessage("Changes were discarded.")
   }
@@ -182,7 +225,7 @@ export default function EditShop() {
         name="Edit Shop Profile"
         user={{
           name: user?.email || "Profile",
-          avatarUrl: ""
+          avatarUrl: logoUrl || ""
         }}
         onSignOut={() => {
           localStorage.removeItem("token")
@@ -215,24 +258,83 @@ export default function EditShop() {
               minWidth: 0
             }}
           >
-            <button
-              type="button"
+            <div
               style={{
+                position: "relative",
                 width: 100,
                 height: 100,
-                borderRadius: 60,
-                border: "1.2px solid #0d4bbf9e",
-                backgroundColor: "#755ddd",
-                flexShrink: 0,
-                cursor: "pointer"
+                flexShrink: 0
               }}
-            />
+            >
+              <button
+                type="button"
+                onClick={handleOpenLogoPicker}
+                style={{
+                  width: 100,
+                  height: 100,
+                  borderRadius: 60,
+                  border: "1.2px solid #0d4bbf9e",
+                  backgroundColor: "#ffffff",
+                  backgroundImage: `url(${logoUrl || "/ProfileEmptyIcon.png"})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                  cursor: uploadingLogo ? "default" : "pointer",
+                  opacity: uploadingLogo ? 0.7 : 1
+                }}
+                title={uploadingLogo ? "Uploading..." : "Upload shop logo"}
+              />
+
+              {logoUrl && (
+                <button
+                  type="button"
+                  onClick={handleRemoveLogo}
+                  style={{
+                    position: "absolute",
+                    right: -4,
+                    bottom: -4,
+                    width: 26,
+                    height: 26,
+                    minWidth: 26,
+                    minHeight: 26,
+                    padding: 0,
+                    borderRadius: "50%",
+                    border: "1px solid #d1d5db",
+                    backgroundColor: "#ffffff",
+                    color: "#333",
+                    fontSize: 15,
+                    lineHeight: "26px",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                    aspectRatio: "1 / 1"
+                  }}
+                  title="Remove logo"
+                >
+                  ×
+                </button>
+              )}
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={handleLogoChange}
+              />
+            </div>
 
             <InputBox
               label="Enter Shop Name"
               value={shopName}
               onChange={setShopName}
             />
+          </div>
+
+          <div style={{ marginTop: 8, fontSize: 14, color: "#555" }}>
+            {uploadingLogo ? "Uploading logo..." : "Click to upload shop Icon"}
           </div>
 
           <div
@@ -472,7 +574,7 @@ export default function EditShop() {
           <button
             type="button"
             onClick={handleSave}
-            disabled={saving}
+            disabled={saving || uploadingLogo}
             style={{
               padding: "12px 35px",
               fontSize: 16,
@@ -480,9 +582,9 @@ export default function EditShop() {
               color: "#ffffff",
               borderRadius: 50,
               fontWeight: 620,
-              cursor: saving ? "default" : "pointer",
+              cursor: saving || uploadingLogo ? "default" : "pointer",
               border: "none",
-              opacity: saving ? 0.7 : 1
+              opacity: saving || uploadingLogo ? 0.7 : 1
             }}
           >
             {saving ? "Saving..." : "Save Changes"}

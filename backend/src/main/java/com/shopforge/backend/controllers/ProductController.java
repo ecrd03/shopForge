@@ -1,5 +1,7 @@
 package com.shopforge.backend.controllers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shopforge.backend.model.Product;
 import com.shopforge.backend.model.ProductResponse;
 import com.shopforge.backend.model.ProductSaveRequest;
@@ -22,6 +24,7 @@ public class ProductController {
     private final ProductRepository products;
     private final TagRepository tags;
     private final ProductTagRepository productTags;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public ProductController(
             ProductRepository products,
@@ -39,35 +42,7 @@ public class ProductController {
         List<ProductResponse> response = new ArrayList<>();
 
         for (Product product : shopProducts) {
-            ProductResponse item = new ProductResponse();
-            item.setId(product.getId());
-            item.setShopId(product.getShopId());
-            item.setName(product.getName());
-            item.setPrice(product.getPrice());
-            item.setStock(product.getStock());
-
-            List<ProductTag> links = productTags.findByIdProductId(product.getId());
-
-            List<String> categoryTags = new ArrayList<>();
-            List<String> searchTags = new ArrayList<>();
-
-            for (ProductTag link : links) {
-                Long tagId = link.getId().getTagId();
-                Tag tag = tags.findById(tagId).orElse(null);
-
-                if (tag == null) continue;
-
-                if (tag.getTagType() == TagType.CATEGORY) {
-                    categoryTags.add(tag.getName());
-                } else if (tag.getTagType() == TagType.SEARCH) {
-                    searchTags.add(tag.getName());
-                }
-            }
-
-            item.setCategoryTags(categoryTags);
-            item.setSearchTags(searchTags);
-
-            response.add(item);
+            response.add(buildProductResponse(product));
         }
 
         return response;
@@ -80,6 +55,7 @@ public class ProductController {
         product.setName(request.getName());
         product.setPrice(request.getPrice());
         product.setStock(request.getStock());
+        product.setImagesJson(toJson(request.getImages()));
 
         Product savedProduct = products.save(product);
         saveTagsForProduct(savedProduct, request);
@@ -96,6 +72,7 @@ public class ProductController {
         existingProduct.setName(request.getName());
         existingProduct.setPrice(request.getPrice());
         existingProduct.setStock(request.getStock());
+        existingProduct.setImagesJson(toJson(request.getImages()));
 
         Product savedProduct = products.save(existingProduct);
 
@@ -146,6 +123,7 @@ public class ProductController {
         item.setName(product.getName());
         item.setPrice(product.getPrice());
         item.setStock(product.getStock());
+        item.setImages(fromJson(product.getImagesJson()));
 
         List<ProductTag> links = productTags.findByIdProductId(product.getId());
 
@@ -167,5 +145,24 @@ public class ProductController {
         item.setSearchTags(searchTags);
 
         return item;
+    }
+
+    private String toJson(List<String> images) {
+        try {
+            return objectMapper.writeValueAsString(images == null ? new ArrayList<>() : images);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to save images");
+        }
+    }
+
+    private List<String> fromJson(String imagesJson) {
+        try {
+            if (imagesJson == null || imagesJson.isBlank()) {
+                return new ArrayList<>();
+            }
+            return objectMapper.readValue(imagesJson, new TypeReference<List<String>>() {});
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
     }
 }

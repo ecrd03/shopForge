@@ -1,24 +1,50 @@
-import { useRef } from "react"
+import { storage } from "../firebase"
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
+import { useRef, useState } from "react"
 
 export default function ImagePopUp({ images, onAddImages, onRemoveImage }) {
     const fileInputRef = useRef(null)
+    const [uploading, setUploading] = useState(false)
 
     function handleOpenFileExplorer() {
+        if (uploading) return
         fileInputRef.current?.click()
     }
 
-    function handleFileChange(e) {
+    async function handleFileChange(e) {
         const files = Array.from(e.target.files || [])
         if (files.length === 0) return
 
-        const newImages = files.map((file, index) => ({
-            id: `${Date.now()}-${index}`,
-            file,
-            preview: URL.createObjectURL(file)
-        }))
+        try {
+            setUploading(true)
 
-        onAddImages(newImages)
-        e.target.value = ""
+            const uploadedImages = await Promise.all(
+                files.map(async (file, index) => {
+                    const imageRef = ref(
+                        storage,
+                        `product-images/${Date.now()}-${index}-${file.name}`
+                    )
+
+                    await uploadBytes(imageRef, file)
+                    const url = await getDownloadURL(imageRef)
+
+                    return {
+                        id: `${Date.now()}-${index}`,
+                        file,
+                        preview: url,
+                        url
+                    }
+                })
+            )
+
+            onAddImages(uploadedImages)
+        } catch (error) {
+            console.error("Image upload failed:", error)
+            alert("Image upload failed")
+        } finally {
+            setUploading(false)
+            e.target.value = ""
+        }
     }
 
     return (
@@ -66,10 +92,14 @@ export default function ImagePopUp({ images, onAddImages, onRemoveImage }) {
 
                 <button
                     type="button"
-                    style={smallButtonStyle}
+                    style={{
+                        ...smallButtonStyle,
+                        opacity: uploading ? 0.7 : 1,
+                        cursor: uploading ? "default" : "pointer"
+                    }}
                     onClick={handleOpenFileExplorer}
                 >
-                    Upload Images
+                    {uploading ? "Uploading..." : "Upload Images"}
                 </button>
             </div>
 
