@@ -31,14 +31,14 @@ export default function Product({
   onOpenTags,
   onOpenImages
 }) {
-
   const safeProduct = product ?? {
     name: "",
     price: "",
     stock: "",
     categoryTags: [],
     searchTags: [],
-    images: []
+    images: [],
+    isActive: true
   }
 
   function update(field, value) {
@@ -50,7 +50,10 @@ export default function Product({
     <div style={{ width: "116%", display: "flex", alignItems: "center", gap: 30 }}>
       {/* LEFT: toggle */}
       <div style={{ width: 92, display: "flex", justifyContent: "center" }}>
-        <ToggleButton />
+        <ToggleButton
+          value={safeProduct.isActive ?? true}
+          onChange={(newValue) => update("isActive", newValue)}
+        />
       </div>
 
       {/* RIGHT: pill */}
@@ -113,6 +116,7 @@ export default function Product({
           </button>
         </Cell>
       </div>
+
       <SaveDeleteProduct
         isSaved={isSaved}
         showDelete={showDelete}

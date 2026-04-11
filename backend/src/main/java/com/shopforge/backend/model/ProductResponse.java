@@ -12,6 +12,9 @@ public class ProductResponse {
     private List<String> categoryTags;
     private List<String> searchTags;
     private List<String> images;
+    private Boolean isActive;
+
+    public Boolean getIsActive() { return isActive; }
 
     public Long getId() { return id; }
     public Long getShopId() { return shopId; }
@@ -22,6 +25,7 @@ public class ProductResponse {
     public List<String> getSearchTags() { return searchTags; }
     public List<String> getImages() { return images; }
 
+    public void setIsActive(Boolean isActive) { this.isActive = isActive; }
     public void setId(Long id) { this.id = id; }
     public void setShopId(Long shopId) { this.shopId = shopId; }
     public void setName(String name) { this.name = name; }

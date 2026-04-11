@@ -1,4 +1,10 @@
-export default function PopUp({ isOpen, onClose, children, productName }) {
+export default function PopUp({
+  isOpen,
+  onClose,
+  children,
+  productName,
+  hideFooter = false
+}) {
   if (!isOpen) return null
 
   return (
@@ -14,18 +20,19 @@ export default function PopUp({ isOpen, onClose, children, productName }) {
           </div>
         </div>
 
-        <div style={footerStyle}>
-          <div style={productNameWrapStyle}>
-            <div style={productNameTextStyle}>
-              {productName
-                ? (productName.length > 22
-                  ? productName.slice(0, 22) + "..."
-                  : productName)
-                : "No product"}
+        {!hideFooter && (
+          <div style={footerStyle}>
+            <div style={productNameWrapStyle}>
+              <div style={productNameTextStyle}>
+                {productName
+                  ? productName.length > 22
+                    ? productName.slice(0, 22) + "..."
+                    : productName
+                  : "No product"}
+              </div>
             </div>
           </div>
-
-        </div>
+        )}
       </div>
     </div>
   )
@@ -41,24 +48,41 @@ const overlayStyle = {
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  zIndex: 1000
+  zIndex: 1000,
+  padding: 20,
+  boxSizing: "border-box"
 }
 
 const popupStyle = {
   backgroundColor: "#f3f3f3",
-  width: "780px",
+  width: "900px",
+  maxWidth: "calc(100vw - 40px)",
   minHeight: "560px",
+  maxHeight: "calc(100vh - 40px)",
   border: "1px solid #7f8892",
   borderRadius: 25,
   position: "relative",
   boxSizing: "border-box",
   padding: "24px",
   display: "flex",
-  flexDirection: "column"
+  flexDirection: "column",
+  overflow: "hidden"
+}
+
+const contentWrapperStyle = {
+  display: "flex",
+  flexDirection: "column",
+  flex: 1,
+  minHeight: 0,
+  overflow: "hidden"
 }
 
 const contentStyle = {
-  marginTop: 20
+  marginTop: 20,
+  flex: 1,
+  minHeight: 0,
+  overflow: "hidden",
+  paddingRight: 6
 }
 
 const footerStyle = {
@@ -66,7 +90,8 @@ const footerStyle = {
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  gap: 16
+  gap: 16,
+  flexShrink: 0
 }
 
 const productNameWrapStyle = {
@@ -74,40 +99,23 @@ const productNameWrapStyle = {
   minWidth: 0
 }
 
-const closeStyle = {
-  position: "absolute",
-  top: "12px",
-  right: "14px",
-  border: "none",
-  background: "transparent",
-  fontSize: "22px",
-  cursor: "pointer",
-  color: "#111827"
-}
-
-const saveButtonStyle = {
-  padding: "12px 24px",
-  borderRadius: 10,
-  border: "none",
-  backgroundColor: "#d9d9d9",
-  color: "#000000",
-  fontSize: 16,
-  fontWeight: 600,
-  cursor: "pointer"
-}
-
-const contentWrapperStyle = {
-  display: "flex",
-  flexDirection: "column",
-  height: "100%"
-}
-
 const productNameTextStyle = {
   fontSize: 25,
   fontWeight: 600,
   color: "#271311",
-
   whiteSpace: "nowrap",
   overflow: "hidden",
   textOverflow: "ellipsis"
+}
+
+const closeStyle = {
+  position: "absolute",
+  top: "10px",
+  right: "10px",
+  border: "none",
+  background: "transparent",
+  fontSize: "20px",
+  cursor: "pointer",
+  color: "#111827",
+  zIndex: 2
 }

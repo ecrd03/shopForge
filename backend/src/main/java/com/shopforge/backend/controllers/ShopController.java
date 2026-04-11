@@ -5,7 +5,12 @@ import com.shopforge.backend.repo.ProductRepository;
 import com.shopforge.backend.repo.ShopRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shopforge.backend.model.CustomCategorySaveRequest;
+import com.shopforge.backend.model.CustomCategoryResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -15,6 +20,7 @@ public class ShopController {
 
     private final ShopRepository shops;
     private final ProductRepository products;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public ShopController(ShopRepository shops, ProductRepository products) {
         this.shops = shops;
@@ -125,5 +131,47 @@ public class ShopController {
             this.ebayUrl = ebayUrl;
             this.productCount = productCount;
         }
+    }
+
+    @PutMapping("/{id}/custom-category")
+    public CustomCategoryResponse updateCustomCategory(
+            @PathVariable Long id,
+            @RequestBody CustomCategorySaveRequest request
+    ) {
+        Shop shop = shops.findById(id)
+                .orElseThrow(() -> new RuntimeException("Shop not found"));
+
+        // save toggle
+        shop.setCustomCategoryEnabled(
+                request.getEnabled() != null ? request.getEnabled() : false
+        );
+
+        // save lines as JSON
+        try {
+            String linesJson = objectMapper.writeValueAsString(
+                    request.getLines() == null ? new ArrayList<>() : request.getLines()
+            );
+            shop.setCustomCategoryLines(linesJson);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to save custom category");
+        }
+
+        Shop savedShop = shops.save(shop);
+
+        // build response
+        CustomCategoryResponse response = new CustomCategoryResponse();
+        response.setEnabled(savedShop.getCustomCategoryEnabled());
+
+        try {
+            List<List<String>> lines = objectMapper.readValue(
+                    savedShop.getCustomCategoryLines(),
+                    new TypeReference<List<List<String>>>() {}
+            );
+            response.setLines(lines);
+        } catch (Exception e) {
+            response.setLines(new ArrayList<>());
+        }
+
+        return response;
     }
 }

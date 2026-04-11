@@ -5,6 +5,7 @@ import Product from "../components/Product"
 import PopUp from "../components/PopUp"
 import TagPopUp from "../components/TagPopUp"
 import ImagePopUp from "../components/ImagePopUp"
+import CategoryPopUp from "../components/CategoryPopUp"
 
 import { useState, useEffect } from "react"
 
@@ -30,6 +31,9 @@ export default function ShopDashboard() {
 
   const [allShopTags, setAllShopTags] = useState([])
 
+  const [customCategoryEnabled, setCustomCategoryEnabled] = useState(false)
+  const [customCategoryLines, setCustomCategoryLines] = useState([])
+
   useEffect(() => {
     async function loadProducts() {
       if (!shopId) return
@@ -45,6 +49,7 @@ export default function ShopDashboard() {
           preview: url,
           url
         })),
+        isActive: product.isActive ?? true,
         isSaved: true
       }))
 
@@ -67,6 +72,8 @@ export default function ShopDashboard() {
     async function loadShop() {
       if (!shopId) {
         setLoadingShop(false)
+        setCustomCategoryEnabled(false)
+        setCustomCategoryLines([])
         return
       }
 
@@ -78,8 +85,19 @@ export default function ShopDashboard() {
 
         const data = await response.json()
         setShop(data)
+
+        setCustomCategoryEnabled(data.customCategoryEnabled ?? false)
+
+        const parsedLines =
+          data.customCategoryLines && data.customCategoryLines.trim() !== ""
+            ? JSON.parse(data.customCategoryLines)
+            : []
+
+        setCustomCategoryLines(parsedLines)
       } catch (error) {
         console.error("Error loading shop:", error)
+        setCustomCategoryEnabled(false)
+        setCustomCategoryLines([])
       } finally {
         setLoadingShop(false)
       }
@@ -96,7 +114,8 @@ export default function ShopDashboard() {
       stock: Number(product.stock),
       categoryTags: product.categoryTags || [],
       searchTags: product.searchTags || [],
-      images: (product.images || []).map((image) => image.url || image.preview)
+      images: (product.images || []).map((image) => image.url || image.preview),
+      isActive: product.isActive ?? true
     }
 
     const isEditingExistingProduct = product.id != null
@@ -130,6 +149,33 @@ export default function ShopDashboard() {
 
     setProducts(updatedProducts)
   }
+  async function handleSaveCustomCategory({ enabled, lines }) {
+    if (!shopId) return
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/shops/${shopId}/custom-category`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          enabled,
+          lines
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to save custom category")
+      }
+
+      const savedData = await response.json()
+
+      setCustomCategoryEnabled(savedData.enabled ?? false)
+      setCustomCategoryLines(savedData.lines ?? [])
+    } catch (error) {
+      console.error("Error saving custom category:", error)
+    }
+  }
 
   async function handleDeleteProduct(product, index) {
     if (product.id != null) {
@@ -142,7 +188,7 @@ export default function ShopDashboard() {
     setProducts(updatedProducts)
   }
 
-  function openPopUp(mode, index, productName) {
+  function openPopUp(mode, index = null, productName = "") {
     setPopUpMode(mode)
     setActiveProductIndex(index)
     setPopUpProductName(productName)
@@ -320,29 +366,22 @@ export default function ShopDashboard() {
           }}
         >
           {/* icon image*/}
-          {shop?.logoUrl ? (
-            <img
-              src={shop.logoUrl}
-              alt={shop?.name || "Shop logo"}
-              style={{
-                width: 120,
-                height: 120,
-                borderRadius: "50%",
-                objectFit: "cover",
-                flexShrink: 0
-              }}
-            />
-          ) : (
-            <div
-              style={{
-                width: 120,
-                height: 120,
-                borderRadius: "50%",
-                backgroundColor: "#8c5ddd",
-                flexShrink: 0
-              }}
-            />
-          )}
+          <img
+            src={
+              shop?.logoUrl && shop.logoUrl.trim() !== ""
+                ? shop.logoUrl
+                : "/ProfileEmptyIcon.png"
+            }
+            alt={shop?.name || "Shop logo"}
+            style={{
+              width: 120,
+              height: 120,
+              borderRadius: "50%",
+              objectFit: "cover",
+              flexShrink: 0
+            }}
+          />
+          
           {/* Shop Name*/}
           <span
             style={{
@@ -442,6 +481,29 @@ export default function ShopDashboard() {
             gap: 18
           }}
         >
+          {/* category Button*/}
+          <button
+            type="button"
+            onClick={() => openPopUp("customCategory")}
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: 10,
+              border: "1px solid #d1d5db",
+              backgroundColor: "#ffffff",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer"
+            }}
+          >
+            <img
+              src="/category.png"
+              alt="Categories"
+              style={{ width: 40, height: 40 }}
+            />
+          </button>
+
           {/* delete Button*/}
           <button
             type="button"
@@ -478,6 +540,7 @@ export default function ShopDashboard() {
                   categoryTags: [],
                   searchTags: [],
                   images: [],
+                  isActive: true,
                   isSaved: false
                 }
               ])
@@ -551,6 +614,7 @@ export default function ShopDashboard() {
         isOpen={isPopUpOpen}
         onClose={() => setIsPopUpOpen(false)}
         productName={popUpProductName}
+        hideFooter={popUpMode === "customCategory"}
       >
         {popUpMode === "tags" ? (
           <TagPopUp
@@ -564,13 +628,20 @@ export default function ShopDashboard() {
             onRemoveTag={handleRemoveTag}
             onTagInputKeyDown={handleTagInputKeyDown}
           />
-        ) : (
+        ) : popUpMode === "images" ? (
           <ImagePopUp
             images={activeProduct?.images || []}
             onAddImages={handleAddImages}
             onRemoveImage={handleRemoveImage}
           />
-        )}
+        ) : popUpMode === "customCategory" ? (
+          <CategoryPopUp
+            allCategoryTags={allShopTags}
+            initialEnabled={customCategoryEnabled}
+            initialLines={customCategoryLines}
+            onSave={handleSaveCustomCategory}
+          />
+        ) : null}
       </PopUp>
 
     </div>

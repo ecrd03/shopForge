@@ -333,7 +333,7 @@ export default function EditShop() {
             />
           </div>
 
-          <div style={{ marginTop: 8, fontSize: 14, color: "#555" }}>
+          <div style={{ marginTop: 8, fontSize: 10, color: "#555" }}>
             {uploadingLogo ? "Uploading logo..." : "Click to upload shop Icon"}
           </div>
 

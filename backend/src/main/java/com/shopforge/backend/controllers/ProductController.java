@@ -55,6 +55,7 @@ public class ProductController {
         product.setName(request.getName());
         product.setPrice(request.getPrice());
         product.setStock(request.getStock());
+        product.setIsActive(request.getIsActive() != null ? request.getIsActive() : true);
         product.setImagesJson(toJson(request.getImages()));
 
         Product savedProduct = products.save(product);
@@ -72,6 +73,7 @@ public class ProductController {
         existingProduct.setName(request.getName());
         existingProduct.setPrice(request.getPrice());
         existingProduct.setStock(request.getStock());
+        existingProduct.setIsActive(request.getIsActive() != null ? request.getIsActive() : true);
         existingProduct.setImagesJson(toJson(request.getImages()));
 
         Product savedProduct = products.save(existingProduct);
@@ -124,6 +126,7 @@ public class ProductController {
         item.setPrice(product.getPrice());
         item.setStock(product.getStock());
         item.setImages(fromJson(product.getImagesJson()));
+        item.setIsActive(product.getIsActive());
 
         List<ProductTag> links = productTags.findByIdProductId(product.getId());
 

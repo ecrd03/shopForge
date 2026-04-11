@@ -44,6 +44,13 @@ public class Shop {
     private String depopUrl;
     private String ebayUrl;
 
+    @Column(name = "custom_category_enabled", nullable = false)
+    private Boolean customCategoryEnabled = false;
+
+    @Lob
+    @Column(name = "custom_category_lines", columnDefinition = "LONGTEXT")
+    private String customCategoryLines;
+
     public Long getId() { return id; }
     public String getName() { return name; }
     public String getDescription() { return description; }
@@ -65,6 +72,9 @@ public class Shop {
     public String getDepopUrl() { return depopUrl; }
     public String getEbayUrl() { return ebayUrl; }
 
+    public Boolean getCustomCategoryEnabled() { return customCategoryEnabled; }
+    public String getCustomCategoryLines() { return customCategoryLines; }
+
     public void setName(String name) { this.name = name; }
     public void setDescription(String description) { this.description = description; }
     public void setLogoUrl(String logoUrl) { this.logoUrl = logoUrl; }
@@ -79,4 +89,12 @@ public class Shop {
     public void setShopifyUrl(String shopifyUrl) { this.shopifyUrl = shopifyUrl; }
     public void setDepopUrl(String depopUrl) { this.depopUrl = depopUrl; }
     public void setEbayUrl(String ebayUrl) { this.ebayUrl = ebayUrl; }
+
+    public void setCustomCategoryEnabled(Boolean customCategoryEnabled) {
+        this.customCategoryEnabled = customCategoryEnabled;
+    }
+
+    public void setCustomCategoryLines(String customCategoryLines) {
+        this.customCategoryLines = customCategoryLines;
+    }
 }

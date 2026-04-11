@@ -152,6 +152,7 @@ const rightTagBoxStyle = {
   borderRadius: 18,
   backgroundColor: "#ffffff",
   minHeight: 340,
+  width: "125%",
   padding: 14,
   display: "flex",
   flexWrap: "wrap",
