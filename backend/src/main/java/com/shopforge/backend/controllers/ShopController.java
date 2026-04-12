@@ -79,6 +79,15 @@ public class ShopController {
                     existingShop.setDepopUrl(updatedShop.getDepopUrl());
                     existingShop.setEbayUrl(updatedShop.getEbayUrl());
 
+                    existingShop.setInstagramEnabled(updatedShop.getInstagramEnabled());
+                    existingShop.setFacebookEnabled(updatedShop.getFacebookEnabled());
+                    existingShop.setTwitterEnabled(updatedShop.getTwitterEnabled());
+                    existingShop.setTiktokEnabled(updatedShop.getTiktokEnabled());
+                    existingShop.setEtsyEnabled(updatedShop.getEtsyEnabled());
+                    existingShop.setShopifyEnabled(updatedShop.getShopifyEnabled());
+                    existingShop.setDepopEnabled(updatedShop.getDepopEnabled());
+                    existingShop.setEbayEnabled(updatedShop.getEbayEnabled());
+
                     return ResponseEntity.ok(shops.save(existingShop));
                 })
                 .orElse(ResponseEntity.notFound().build());

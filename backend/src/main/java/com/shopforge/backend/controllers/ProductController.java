@@ -5,13 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shopforge.backend.model.Product;
 import com.shopforge.backend.model.ProductResponse;
 import com.shopforge.backend.model.ProductSaveRequest;
-import com.shopforge.backend.model.ProductTag;
-import com.shopforge.backend.model.ProductTagId;
-import com.shopforge.backend.model.Tag;
-import com.shopforge.backend.model.TagType;
 import com.shopforge.backend.repo.ProductRepository;
-import com.shopforge.backend.repo.ProductTagRepository;
-import com.shopforge.backend.repo.TagRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -22,18 +16,10 @@ import java.util.List;
 public class ProductController {
 
     private final ProductRepository products;
-    private final TagRepository tags;
-    private final ProductTagRepository productTags;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public ProductController(
-            ProductRepository products,
-            TagRepository tags,
-            ProductTagRepository productTags
-    ) {
+    public ProductController(ProductRepository products) {
         this.products = products;
-        this.tags = tags;
-        this.productTags = productTags;
     }
 
     @GetMapping("/shop/{shopId}")
@@ -57,10 +43,10 @@ public class ProductController {
         product.setStock(request.getStock());
         product.setIsActive(request.getIsActive() != null ? request.getIsActive() : true);
         product.setImagesJson(toJson(request.getImages()));
+        product.setCategoryTagsJson(toJson(request.getCategoryTags()));
+        product.setSearchTagsJson(toJson(request.getSearchTags()));
 
         Product savedProduct = products.save(product);
-        saveTagsForProduct(savedProduct, request);
-
         return buildProductResponse(savedProduct);
     }
 
@@ -75,47 +61,16 @@ public class ProductController {
         existingProduct.setStock(request.getStock());
         existingProduct.setIsActive(request.getIsActive() != null ? request.getIsActive() : true);
         existingProduct.setImagesJson(toJson(request.getImages()));
+        existingProduct.setCategoryTagsJson(toJson(request.getCategoryTags()));
+        existingProduct.setSearchTagsJson(toJson(request.getSearchTags()));
 
         Product savedProduct = products.save(existingProduct);
-
-        productTags.deleteByIdProductId(savedProduct.getId());
-        saveTagsForProduct(savedProduct, request);
-
         return buildProductResponse(savedProduct);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
-        productTags.deleteByIdProductId(id);
         products.deleteById(id);
-    }
-
-    private void saveTagsForProduct(Product product, ProductSaveRequest request) {
-        saveTagList(product, request.getCategoryTags(), TagType.CATEGORY);
-        saveTagList(product, request.getSearchTags(), TagType.SEARCH);
-    }
-
-    private void saveTagList(Product product, List<String> tagNames, TagType tagType) {
-        if (tagNames == null) return;
-
-        for (String rawName : tagNames) {
-            if (rawName == null) continue;
-
-            String name = rawName.trim();
-            if (name.isEmpty()) continue;
-
-            Tag tag = tags.findByShopIdAndNameAndTagType(product.getShopId(), name, tagType)
-                    .orElseGet(() -> {
-                        Tag newTag = new Tag();
-                        newTag.setShopId(product.getShopId());
-                        newTag.setName(name);
-                        newTag.setTagType(tagType);
-                        return tags.save(newTag);
-                    });
-
-            ProductTag link = new ProductTag(new ProductTagId(product.getId(), tag.getId()));
-            productTags.save(link);
-        }
     }
 
     private ProductResponse buildProductResponse(Product product) {
@@ -125,45 +80,27 @@ public class ProductController {
         item.setName(product.getName());
         item.setPrice(product.getPrice());
         item.setStock(product.getStock());
-        item.setImages(fromJson(product.getImagesJson()));
         item.setIsActive(product.getIsActive());
-
-        List<ProductTag> links = productTags.findByIdProductId(product.getId());
-
-        List<String> categoryTags = new ArrayList<>();
-        List<String> searchTags = new ArrayList<>();
-
-        for (ProductTag link : links) {
-            Tag tag = tags.findById(link.getId().getTagId()).orElse(null);
-            if (tag == null) continue;
-
-            if (tag.getTagType() == TagType.CATEGORY) {
-                categoryTags.add(tag.getName());
-            } else if (tag.getTagType() == TagType.SEARCH) {
-                searchTags.add(tag.getName());
-            }
-        }
-
-        item.setCategoryTags(categoryTags);
-        item.setSearchTags(searchTags);
-
+        item.setImages(fromJson(product.getImagesJson()));
+        item.setCategoryTags(fromJson(product.getCategoryTagsJson()));
+        item.setSearchTags(fromJson(product.getSearchTagsJson()));
         return item;
     }
 
-    private String toJson(List<String> images) {
+    private String toJson(List<String> values) {
         try {
-            return objectMapper.writeValueAsString(images == null ? new ArrayList<>() : images);
+            return objectMapper.writeValueAsString(values == null ? new ArrayList<>() : values);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to save images");
+            throw new RuntimeException("Failed to save json data");
         }
     }
 
-    private List<String> fromJson(String imagesJson) {
+    private List<String> fromJson(String json) {
         try {
-            if (imagesJson == null || imagesJson.isBlank()) {
+            if (json == null || json.isBlank()) {
                 return new ArrayList<>();
             }
-            return objectMapper.readValue(imagesJson, new TypeReference<List<String>>() {});
+            return objectMapper.readValue(json, new TypeReference<List<String>>() {});
         } catch (Exception e) {
             return new ArrayList<>();
         }

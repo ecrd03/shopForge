@@ -44,6 +44,31 @@ public class Shop {
     private String depopUrl;
     private String ebayUrl;
 
+    // NEW: enabled toggles
+    @Column(name = "instagram_enabled", nullable = false)
+    private Boolean instagramEnabled = true;
+
+    @Column(name = "facebook_enabled", nullable = false)
+    private Boolean facebookEnabled = true;
+
+    @Column(name = "twitter_enabled", nullable = false)
+    private Boolean twitterEnabled = true;
+
+    @Column(name = "tiktok_enabled", nullable = false)
+    private Boolean tiktokEnabled = true;
+
+    @Column(name = "etsy_enabled", nullable = false)
+    private Boolean etsyEnabled = true;
+
+    @Column(name = "shopify_enabled", nullable = false)
+    private Boolean shopifyEnabled = true;
+
+    @Column(name = "depop_enabled", nullable = false)
+    private Boolean depopEnabled = true;
+
+    @Column(name = "ebay_enabled", nullable = false)
+    private Boolean ebayEnabled = true;
+
     @Column(name = "custom_category_enabled", nullable = false)
     private Boolean customCategoryEnabled = false;
 
@@ -51,6 +76,7 @@ public class Shop {
     @Column(name = "custom_category_lines", columnDefinition = "LONGTEXT")
     private String customCategoryLines;
 
+    // GETTERS
     public Long getId() { return id; }
     public String getName() { return name; }
     public String getDescription() { return description; }
@@ -72,9 +98,19 @@ public class Shop {
     public String getDepopUrl() { return depopUrl; }
     public String getEbayUrl() { return ebayUrl; }
 
+    public Boolean getInstagramEnabled() { return instagramEnabled; }
+    public Boolean getFacebookEnabled() { return facebookEnabled; }
+    public Boolean getTwitterEnabled() { return twitterEnabled; }
+    public Boolean getTiktokEnabled() { return tiktokEnabled; }
+    public Boolean getEtsyEnabled() { return etsyEnabled; }
+    public Boolean getShopifyEnabled() { return shopifyEnabled; }
+    public Boolean getDepopEnabled() { return depopEnabled; }
+    public Boolean getEbayEnabled() { return ebayEnabled; }
+
     public Boolean getCustomCategoryEnabled() { return customCategoryEnabled; }
     public String getCustomCategoryLines() { return customCategoryLines; }
 
+    // SETTERS
     public void setName(String name) { this.name = name; }
     public void setDescription(String description) { this.description = description; }
     public void setLogoUrl(String logoUrl) { this.logoUrl = logoUrl; }
@@ -89,6 +125,15 @@ public class Shop {
     public void setShopifyUrl(String shopifyUrl) { this.shopifyUrl = shopifyUrl; }
     public void setDepopUrl(String depopUrl) { this.depopUrl = depopUrl; }
     public void setEbayUrl(String ebayUrl) { this.ebayUrl = ebayUrl; }
+
+    public void setInstagramEnabled(Boolean instagramEnabled) { this.instagramEnabled = instagramEnabled; }
+    public void setFacebookEnabled(Boolean facebookEnabled) { this.facebookEnabled = facebookEnabled; }
+    public void setTwitterEnabled(Boolean twitterEnabled) { this.twitterEnabled = twitterEnabled; }
+    public void setTiktokEnabled(Boolean tiktokEnabled) { this.tiktokEnabled = tiktokEnabled; }
+    public void setEtsyEnabled(Boolean etsyEnabled) { this.etsyEnabled = etsyEnabled; }
+    public void setShopifyEnabled(Boolean shopifyEnabled) { this.shopifyEnabled = shopifyEnabled; }
+    public void setDepopEnabled(Boolean depopEnabled) { this.depopEnabled = depopEnabled; }
+    public void setEbayEnabled(Boolean ebayEnabled) { this.ebayEnabled = ebayEnabled; }
 
     public void setCustomCategoryEnabled(Boolean customCategoryEnabled) {
         this.customCategoryEnabled = customCategoryEnabled;

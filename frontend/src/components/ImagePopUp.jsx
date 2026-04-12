@@ -2,14 +2,31 @@ import { storage } from "../firebase"
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
 import { useRef, useState } from "react"
 
-export default function ImagePopUp({ images, onAddImages, onRemoveImage }) {
+export default function ImagePopUp({
+    images,
+    onAddImages,
+    onRemoveImage,
+    onSetCoverImage
+}) {
     const fileInputRef = useRef(null)
     const [uploading, setUploading] = useState(false)
+    const [isChoosingCover, setIsChoosingCover] = useState(false)
 
     function handleOpenFileExplorer() {
         if (uploading) return
         fileInputRef.current?.click()
     }
+
+    function handleChooseCover(imageId) {
+        if (!isChoosingCover) return
+
+        onSetCoverImage?.(imageId)
+        setIsChoosingCover(false)
+    }
+
+    
+
+
 
     async function handleFileChange(e) {
         const files = Array.from(e.target.files || [])
@@ -59,7 +76,15 @@ export default function ImagePopUp({ images, onAddImages, onRemoveImage }) {
                         const image = images[index]
 
                         return (
-                            <div key={index} style={imageSlotStyle}>
+                            <div
+                                key={index}
+                                style={{
+                                    ...imageSlotStyle,
+                                    cursor: image && isChoosingCover ? "pointer" : "default",
+                                    outline: image && isChoosingCover ? "3px solid #fbbf24" : "none"
+                                }}
+                                onClick={() => image && handleChooseCover(image.id)}
+                            >
                                 <div style={slotNumberStyle}>{index + 1}</div>
 
                                 {image && (
@@ -72,7 +97,10 @@ export default function ImagePopUp({ images, onAddImages, onRemoveImage }) {
 
                                         <button
                                             type="button"
-                                            onClick={() => onRemoveImage(image.id)}
+                                            onClick={(e) => {
+                                                e.stopPropagation()
+                                                onRemoveImage(image.id)
+                                            }}
                                             style={removeButtonStyle}
                                         >
                                             ✕
@@ -86,10 +114,17 @@ export default function ImagePopUp({ images, onAddImages, onRemoveImage }) {
             </div>
 
             <div style={bottomButtonRowStyle}>
-                <button type="button" style={smallButtonStyle}>
-                    Order
+                <button
+                    type="button"
+                    onClick={() => setIsChoosingCover((prev) => !prev)}
+                    style={{
+                        ...smallButtonStyle,
+                        backgroundColor: isChoosingCover ? "#fef3c7" : "#ffffff",
+                        border: isChoosingCover ? "1px solid #f59e0b" : "1px solid #bfc5cc"
+                    }}
+                >
+                    {isChoosingCover ? "Pick Cover" : "Star"}
                 </button>
-
                 <button
                     type="button"
                     style={{

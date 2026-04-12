@@ -7,14 +7,19 @@ import TagPopUp from "../components/TagPopUp"
 import ImagePopUp from "../components/ImagePopUp"
 import CategoryPopUp from "../components/CategoryPopUp"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
+
 
 export default function ShopDashboard() {
   const navigate = useNavigate()
 
   const [products, setProducts] = useState([])
-
   const [deleteMode, setDeleteMode] = useState(false)
+
+  const [isFilterOpen, setIsFilterOpen] = useState(false)
+
+  const [searchTerm, setSearchTerm] = useState("")
+  const [filterOption, setFilterOption] = useState("oldest")
 
   const [isPopUpOpen, setIsPopUpOpen] = useState(false)
   const [popUpMode, setPopUpMode] = useState("")
@@ -29,7 +34,10 @@ export default function ShopDashboard() {
   const [shop, setShop] = useState(null)
   const [loadingShop, setLoadingShop] = useState(true)
 
-  const [allShopTags, setAllShopTags] = useState([])
+  const [allShopTags, setAllShopTags] = useState({
+    category: [],
+    search: []
+  })
 
   const [customCategoryEnabled, setCustomCategoryEnabled] = useState(false)
   const [customCategoryLines, setCustomCategoryLines] = useState([])
@@ -37,6 +45,7 @@ export default function ShopDashboard() {
   useEffect(() => {
     async function loadProducts() {
       if (!shopId) return
+
       const response = await fetch(`http://localhost:8080/api/products/shop/${shopId}`)
       const data = await response.json()
 
@@ -53,20 +62,23 @@ export default function ShopDashboard() {
         isSaved: true
       }))
 
-      const tagSet = new Set()
+      const categoryTagSet = new Set()
+      const searchTagSet = new Set()
 
       formattedProducts.forEach((product) => {
-        ; (product.categoryTags || []).forEach((tag) => tagSet.add(tag))
-          ; (product.searchTags || []).forEach((tag) => tagSet.add(tag))
+        ; (product.categoryTags || []).forEach((tag) => categoryTagSet.add(tag))
+          ; (product.searchTags || []).forEach((tag) => searchTagSet.add(tag))
       })
 
-      setAllShopTags(Array.from(tagSet))
-
+      setAllShopTags({
+        category: Array.from(categoryTagSet),
+        search: Array.from(searchTagSet)
+      })
       setProducts(formattedProducts)
     }
 
     loadProducts()
-  }, [])
+  }, [shopId])
 
   useEffect(() => {
     async function loadShop() {
@@ -106,23 +118,52 @@ export default function ShopDashboard() {
     loadShop()
   }, [shopId])
 
-  async function handleSaveProduct(product, index) {
-    const productToSave = {
-      shopId: shopId,
-      name: product.name,
-      price: Number(product.price),
-      stock: Number(product.stock),
-      categoryTags: product.categoryTags || [],
-      searchTags: product.searchTags || [],
-      images: (product.images || []).map((image) => image.url || image.preview),
-      isActive: product.isActive ?? true
+  function handleSetCoverImage(imageId) {
+    if (activeProductIndex === null) return
+
+    const updatedProducts = [...products]
+    const currentProduct = updatedProducts[activeProductIndex]
+    const currentImages = [...(currentProduct.images || [])]
+
+    const clickedIndex = currentImages.findIndex((image) => image.id === imageId)
+    if (clickedIndex <= 0) return
+
+      ;[currentImages[0], currentImages[clickedIndex]] = [currentImages[clickedIndex], currentImages[0]]
+
+    updatedProducts[activeProductIndex] = {
+      ...currentProduct,
+      images: currentImages,
+      isSaved: false
     }
 
-    const isEditingExistingProduct = product.id != null
+    setProducts(updatedProducts)
+  }
+
+  async function handleSaveProduct(product, index) {
+    const latestProduct = products[index] || product
+
+    const productToSave = {
+      shopId: shopId,
+      name: latestProduct.name,
+      price: Number(latestProduct.price),
+      stock: Number(latestProduct.stock),
+      categoryTags: latestProduct.categoryTags || [],
+      searchTags: latestProduct.searchTags || [],
+      images: (latestProduct.images || []).map((image) => image.url || image.preview),
+      isActive: latestProduct.isActive ?? true
+    }
+
+    console.log("saving product", {
+      name: latestProduct.name,
+      categoryTags: latestProduct.categoryTags,
+      searchTags: latestProduct.searchTags
+    })
+
+    const isEditingExistingProduct = latestProduct.id != null
 
     const response = await fetch(
       isEditingExistingProduct
-        ? `http://localhost:8080/api/products/${product.id}`
+        ? `http://localhost:8080/api/products/${latestProduct.id}`
         : "http://localhost:8080/api/products",
       {
         method: isEditingExistingProduct ? "PUT" : "POST",
@@ -149,6 +190,7 @@ export default function ShopDashboard() {
 
     setProducts(updatedProducts)
   }
+
   async function handleSaveCustomCategory({ enabled, lines }) {
     if (!shopId) return
 
@@ -207,16 +249,24 @@ export default function ShopDashboard() {
   const activeTagLines =
     popUpMode === "tags" && activeProduct
       ? activeTagSection === "category"
-        ? activeProduct.categoryTags
-        : activeProduct.searchTags
-      : []
-  const activeProductUsedTags =
-    activeProduct
-      ? [...(activeProduct.categoryTags || []), ...(activeProduct.searchTags || [])]
+        ? (activeProduct.categoryTags || [])
+        : (activeProduct.searchTags || [])
       : []
 
-  const availableShopTags = allShopTags.filter(
-    (tag) => !activeProductUsedTags.includes(tag)
+  const sourceTags =
+    activeTagSection === "category"
+      ? allShopTags.category
+      : allShopTags.search
+
+  const currentSectionTags =
+    activeProduct
+      ? activeTagSection === "category"
+        ? (activeProduct.categoryTags || [])
+        : (activeProduct.searchTags || [])
+      : []
+
+  const availableShopTags = sourceTags.filter(
+    (tag) => !currentSectionTags.includes(tag)
   )
 
   function normalizeTag(tag) {
@@ -252,8 +302,15 @@ export default function ShopDashboard() {
     }
 
     setAllShopTags((prev) => {
-      if (prev.includes(cleanedTag)) return prev
-      return [...prev, cleanedTag]
+      const key = activeTagSection === "category" ? "category" : "search"
+      const currentList = prev[key] || []
+
+      if (currentList.includes(cleanedTag)) return prev
+
+      return {
+        ...prev,
+        [key]: [...currentList, cleanedTag]
+      }
     })
   }
 
@@ -262,16 +319,13 @@ export default function ShopDashboard() {
 
     const updatedProducts = [...products]
     const currentProduct = updatedProducts[activeProductIndex]
-
-    const currentTags =
-      activeTagSection === "category"
-        ? currentProduct.categoryTags
-        : currentProduct.searchTags
+    const tagField = activeTagSection === "category" ? "categoryTags" : "searchTags"
 
     updatedProducts[activeProductIndex] = {
       ...currentProduct,
-      [activeTagSection === "category" ? "categoryTags" : "searchTags"]:
-        currentTags.filter((tag) => tag !== tagToRemove),
+      [tagField]: (currentProduct[tagField] || []).filter(
+        (tag) => tag !== tagToRemove
+      ),
       isSaved: false
     }
 
@@ -321,6 +375,94 @@ export default function ShopDashboard() {
     setProducts(updatedProducts)
   }
 
+  const displayedProducts = useMemo(() => {
+    let filtered = [...products]
+
+    const trimmedSearch = searchTerm.trim().toLowerCase()
+
+    if (trimmedSearch !== "") {
+      filtered = filtered.filter((product) => {
+        const nameMatch = (product.name || "")
+          .toLowerCase()
+          .includes(trimmedSearch)
+
+        const categoryMatch = (product.categoryTags || []).some((tag) =>
+          (tag || "").toLowerCase().includes(trimmedSearch)
+        )
+
+        const searchTagMatch = (product.searchTags || []).some((tag) =>
+          (tag || "").toLowerCase().includes(trimmedSearch)
+        )
+
+        return nameMatch || categoryMatch || searchTagMatch
+      })
+    }
+
+    switch (filterOption) {
+      case "isActive":
+        filtered.sort((a, b) => Number(b.isActive) - Number(a.isActive))
+        break
+
+      case "notActive":
+        filtered.sort((a, b) => Number(a.isActive) - Number(b.isActive))
+        break
+
+      case "newest":
+        filtered.sort((a, b) => {
+          if (a.id == null && b.id == null) return 0
+          if (a.id == null) return -1
+          if (b.id == null) return 1
+          return b.id - a.id
+        })
+        break
+
+      case "oldest":
+        filtered.sort((a, b) => {
+          if (a.id == null && b.id == null) return 0
+          if (a.id == null) return 1
+          if (b.id == null) return -1
+          return a.id - b.id
+        })
+        break
+
+      case "az":
+        filtered.sort((a, b) =>
+          (a.name || "").localeCompare(b.name || "", undefined, {
+            sensitivity: "base"
+          })
+        )
+        break
+
+      case "za":
+        filtered.sort((a, b) =>
+          (b.name || "").localeCompare(a.name || "", undefined, {
+            sensitivity: "base"
+          })
+        )
+        break
+
+      case "priceHighLow":
+        filtered.sort((a, b) => Number(b.price || 0) - Number(a.price || 0))
+        break
+
+      case "priceLowHigh":
+        filtered.sort((a, b) => Number(a.price || 0) - Number(b.price || 0))
+        break
+
+      case "stockHighLow":
+        filtered.sort((a, b) => Number(b.stock || 0) - Number(a.stock || 0))
+        break
+
+      case "stockLowHigh":
+        filtered.sort((a, b) => Number(a.stock || 0) - Number(b.stock || 0))
+        break
+
+      default:
+        break
+    }
+
+    return filtered
+  }, [products, searchTerm, filterOption])
 
   return (
     <div
@@ -356,7 +498,6 @@ export default function ShopDashboard() {
           flexWrap: "wrap"
         }}
       >
-
         <div
           style={{
             display: "flex",
@@ -365,7 +506,6 @@ export default function ShopDashboard() {
             minWidth: 0
           }}
         >
-          {/* icon image*/}
           <img
             src={
               shop?.logoUrl && shop.logoUrl.trim() !== ""
@@ -381,8 +521,7 @@ export default function ShopDashboard() {
               flexShrink: 0
             }}
           />
-          
-          {/* Shop Name*/}
+
           <span
             style={{
               fontSize: 37,
@@ -394,7 +533,6 @@ export default function ShopDashboard() {
           </span>
         </div>
 
-
         <div
           style={{
             display: "flex",
@@ -402,12 +540,9 @@ export default function ShopDashboard() {
             gap: 12
           }}
         >
-          {/* External Link Button*/}
           <button
             type="button"
-            onClick={() =>
-              window.open("https://www.etsy.com/shop/RedLineApparels", "_blank")
-            }
+            onClick={() => window.open("/shopforge", "_blank")}
             style={{
               width: 44,
               height: 44,
@@ -428,9 +563,9 @@ export default function ShopDashboard() {
             />
           </button>
 
-          {/* Edit shop Profile Button*/}
           <button
-            type="button" onClick={() => navigate("/editShopProfile")}
+            type="button"
+            onClick={() => navigate("/editShopProfile")}
             style={{
               padding: "12px 20px",
               fontSize: 16,
@@ -446,19 +581,15 @@ export default function ShopDashboard() {
             Edit Profile
           </button>
         </div>
-
-
       </div>
 
-      {/* line dividor*/}
       <div
         style={{
           width: "100%",
           height: 1,
           backgroundColor: "#00000073",
           flexShrink: 0,
-          position: "relative",
-
+          position: "relative"
         }}
       />
 
@@ -467,21 +598,116 @@ export default function ShopDashboard() {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          width: "100%"
+          width: "100%",
+          gap: 16,
+          flexWrap: "wrap"
         }}
       >
-        <SearchBar />
+        {/* LEFT SIDE */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            flex: .87,
+            minWidth: 280
+          }}
+        >
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search products..."
+            style={{
+              flex: 1,
+              height: 44,
+              borderRadius: 50,
+              border: "1px solid #d1d5db",
+              padding: "0 14px",
+              fontSize: 15,
+              outline: "none",
+              backgroundColor: "#ffffff"
+            }}
+          />
 
+          {/* FILTER BUTTON */}
+          <div style={{ position: "relative" }}>
+            <button
+              type="button"
+              onClick={() => setIsFilterOpen(!isFilterOpen)}
+              style={{
+                height: 44,
+                width: 120,
+                padding: "0 20px",
+                borderRadius: 50,
+                border: "none",
+                backgroundColor: "#1c85fd",
+                color: "#ffffff",
+                fontSize: 15,
+                fontWeight: 600,
+                cursor: "pointer"
+              }}
+            >
+              Filter
+            </button>
+
+            {isFilterOpen && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: 52,
+                  right: 0,
+                  width: 220,
+                  backgroundColor: "#ffffff",
+                  border: "1px solid #d1d5db",
+                  borderRadius: 12,
+                  boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+                  overflow: "hidden",
+                  zIndex: 10
+                }}
+              >
+                {[
+                  { label: "Is Active", value: "isActive" },
+                  { label: "Not Active", value: "notActive" },
+                  { label: "Newest", value: "newest" },
+                  { label: "Oldest", value: "oldest" },
+                  { label: "A-Z", value: "az" },
+                  { label: "Z-A", value: "za" },
+                  { label: "Price Highest - Lowest", value: "priceHighLow" },
+                  { label: "Price Lowest - Highest", value: "priceLowHigh" },
+                  { label: "Stock Highest - Lowest", value: "stockHighLow" },
+                  { label: "Stock Lowest - Highest", value: "stockLowHigh" }
+                ].map((option) => (
+                  <div
+                    key={option.value}
+                    onClick={() => {
+                      setFilterOption(option.value)
+                      setIsFilterOpen(false)
+                    }}
+                    style={{
+                      padding: "10px 14px",
+                      cursor: "pointer",
+                      fontSize: 14,
+                      borderBottom: "1px solid #f1f1f1"
+                    }}
+                  >
+                    {option.label}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
 
         {/* RIGHT SIDE */}
         <div
           style={{
             display: "flex",
             alignItems: "center",
-            gap: 18
+            gap: 18,
+            flexShrink: 0
           }}
         >
-          {/* category Button*/}
           <button
             type="button"
             onClick={() => openPopUp("customCategory")}
@@ -497,14 +723,9 @@ export default function ShopDashboard() {
               cursor: "pointer"
             }}
           >
-            <img
-              src="/category.png"
-              alt="Categories"
-              style={{ width: 40, height: 40 }}
-            />
+            <img src="/category.png" style={{ width: 40, height: 40 }} />
           </button>
 
-          {/* delete Button*/}
           <button
             type="button"
             onClick={() => setDeleteMode(!deleteMode)}
@@ -520,11 +741,7 @@ export default function ShopDashboard() {
               cursor: "pointer"
             }}
           >
-            <img
-              src="/delete.png"
-              alt="Delete"
-              style={{ width: 32, height: 32 }}
-            />
+            <img src="/delete.png" style={{ width: 32, height: 32 }} />
           </button>
 
           <button
@@ -562,7 +779,6 @@ export default function ShopDashboard() {
         </div>
       </div>
 
-      {/* LEFT SIDE */}
       <div
         style={{
           display: "flex",
@@ -570,45 +786,69 @@ export default function ShopDashboard() {
           gap: 20
         }}
       >
-        {/* product list */}
-
-
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-          {products.map((product, index) => (
-            <Product
-              key={product.id ?? index}
-              product={product}
-              isSaved={product.isSaved}
-              showDelete={deleteMode}
-              onChange={(updatedProduct) => {
-                const updatedProducts = [...products]
-                updatedProducts[index] = {
-                  ...updatedProduct,
-                  isSaved: false,
-                }
-                setProducts(updatedProducts)
-              }}
-              onSave={() => handleSaveProduct(product, index)}
-              onDelete={() => handleDeleteProduct(product, index)}
-              onOpenTags={() => openPopUp("tags", index, product.name)}
-              onOpenImages={() => openPopUp("images", index, product.name)}
-            />
-          ))}
+          {displayedProducts.map((product) => {
+            const index = products.findIndex((p) => p === product)
+
+            return (
+              <Product
+                key={product.id ?? index}
+                product={product}
+                isSaved={product.isSaved}
+                showDelete={deleteMode}
+                onChange={(updatedProduct) => {
+                  const updatedProducts = [...products]
+                  updatedProducts[index] = {
+                    ...updatedProduct,
+                    isSaved: false
+                  }
+                  setProducts(updatedProducts)
+                }}
+                onSave={() => handleSaveProduct(products[index], index)}
+                onDelete={() => handleDeleteProduct(product, index)}
+                onOpenTags={() => openPopUp("tags", index, product.name)}
+                onOpenImages={() => openPopUp("images", index, product.name)}
+                onRemoveCategoryTag={(tagToRemove) => {
+                  const updatedProducts = [...products]
+                  const currentProduct = updatedProducts[index]
+
+                  updatedProducts[index] = {
+                    ...currentProduct,
+                    categoryTags: (currentProduct.categoryTags || []).filter(
+                      (tag) => tag !== tagToRemove
+                    ),
+                    isSaved: false
+                  }
+
+                  setProducts(updatedProducts)
+                }}
+                onRemoveSearchTag={(tagToRemove) => {
+                  const updatedProducts = [...products]
+                  const currentProduct = updatedProducts[index]
+
+                  updatedProducts[index] = {
+                    ...currentProduct,
+                    searchTags: (currentProduct.searchTags || []).filter(
+                      (tag) => tag !== tagToRemove
+                    ),
+                    isSaved: false
+                  }
+
+                  setProducts(updatedProducts)
+                }}
+              />
+            )
+          })}
         </div>
-
-
       </div>
 
-      {/* RIGHT SIDE */}
       <div
         style={{
           display: "flex",
           alignItems: "center",
           gap: 18
         }}
-      >
-
-      </div>
+      />
 
       <PopUp
         isOpen={isPopUpOpen}
@@ -633,19 +873,17 @@ export default function ShopDashboard() {
             images={activeProduct?.images || []}
             onAddImages={handleAddImages}
             onRemoveImage={handleRemoveImage}
+            onSetCoverImage={handleSetCoverImage}
           />
         ) : popUpMode === "customCategory" ? (
           <CategoryPopUp
-            allCategoryTags={allShopTags}
+            allCategoryTags={allShopTags.category}
             initialEnabled={customCategoryEnabled}
             initialLines={customCategoryLines}
             onSave={handleSaveCustomCategory}
           />
         ) : null}
       </PopUp>
-
     </div>
-
   )
 }
-

@@ -30,6 +30,20 @@ public class Product {
     @Column(name = "images_json", columnDefinition = "LONGTEXT")
     private String imagesJson;
 
+    @Lob
+    @Column(name = "category_tags_json", columnDefinition = "LONGTEXT")
+    private String categoryTagsJson;
+
+    @Lob
+    @Column(name = "search_tags_json", columnDefinition = "LONGTEXT")
+    private String searchTagsJson;
+
+    public String getCategoryTagsJson() { return categoryTagsJson; }
+    public String getSearchTagsJson() { return searchTagsJson; }
+
+    public void setCategoryTagsJson(String categoryTagsJson) { this.categoryTagsJson = categoryTagsJson; }
+    public void setSearchTagsJson(String searchTagsJson) { this.searchTagsJson = searchTagsJson; }
+
     public Long getId() { return id; }
     public Long getShopId() { return shopId; }
     public String getName() { return name; }

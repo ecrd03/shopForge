@@ -6,6 +6,7 @@ import Theme from "../components/Theme"
 import { useNavigate } from "react-router-dom"
 import { storage } from "../firebase"
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
+import ThemeColors from "../components/ThemeColors"
 
 export default function EditShop() {
   const navigate = useNavigate()
@@ -72,14 +73,14 @@ export default function EditShop() {
         setLogoUrl(data.logoUrl || "")
 
         const loadedLinks = {
-          instagram: { enabled: true, value: data.instagramUrl || "" },
-          facebook: { enabled: true, value: data.facebookUrl || "" },
-          twitter: { enabled: true, value: data.twitterUrl || "" },
-          tiktok: { enabled: true, value: data.tiktokUrl || "" },
-          etsy: { enabled: true, value: data.etsyUrl || "" },
-          shopify: { enabled: true, value: data.shopifyUrl || "" },
-          depop: { enabled: true, value: data.depopUrl || "" },
-          ebay: { enabled: true, value: data.ebayUrl || "" }
+          instagram: { enabled: data.instagramEnabled ?? true, value: data.instagramUrl || "" },
+          facebook: { enabled: data.facebookEnabled ?? true, value: data.facebookUrl || "" },
+          twitter: { enabled: data.twitterEnabled ?? true, value: data.twitterUrl || "" },
+          tiktok: { enabled: data.tiktokEnabled ?? true, value: data.tiktokUrl || "" },
+          etsy: { enabled: data.etsyEnabled ?? true, value: data.etsyUrl || "" },
+          shopify: { enabled: data.shopifyEnabled ?? true, value: data.shopifyUrl || "" },
+          depop: { enabled: data.depopEnabled ?? true, value: data.depopUrl || "" },
+          ebay: { enabled: data.ebayEnabled ?? true, value: data.ebayUrl || "" }
         }
 
         setLinks(loadedLinks)
@@ -151,14 +152,24 @@ export default function EditShop() {
           description,
           theme: selectedTheme,
           logoUrl: logoUrl,
-          instagramUrl: links.instagram.enabled ? links.instagram.value : "",
-          facebookUrl: links.facebook.enabled ? links.facebook.value : "",
-          twitterUrl: links.twitter.enabled ? links.twitter.value : "",
-          tiktokUrl: links.tiktok.enabled ? links.tiktok.value : "",
-          etsyUrl: links.etsy.enabled ? links.etsy.value : "",
-          shopifyUrl: links.shopify.enabled ? links.shopify.value : "",
-          depopUrl: links.depop.enabled ? links.depop.value : "",
-          ebayUrl: links.ebay.enabled ? links.ebay.value : ""
+
+          instagramUrl: links.instagram.value,
+          facebookUrl: links.facebook.value,
+          twitterUrl: links.twitter.value,
+          tiktokUrl: links.tiktok.value,
+          etsyUrl: links.etsy.value,
+          shopifyUrl: links.shopify.value,
+          depopUrl: links.depop.value,
+          ebayUrl: links.ebay.value,
+
+          instagramEnabled: links.instagram.enabled,
+          facebookEnabled: links.facebook.enabled,
+          twitterEnabled: links.twitter.enabled,
+          tiktokEnabled: links.tiktok.enabled,
+          etsyEnabled: links.etsy.enabled,
+          shopifyEnabled: links.shopify.enabled,
+          depopEnabled: links.depop.enabled,
+          ebayEnabled: links.ebay.enabled
         })
       })
 
@@ -368,55 +379,16 @@ export default function EditShop() {
                 gap: 22
               }}
             >
-              <Theme
-                colorA="#ffffff"
-                colorB="#2d2c2c"
-                borderColor={selectedTheme === "Theme1" ? "rgb(11, 31, 181)" : "#0d4bbf9e"}
-                onClick={() => setSelectedTheme("Theme1")}
-                size={selectedTheme === "Theme1" ? 65 : 50}
-              />
-              <Theme
-                colorA="#000000"
-                colorB="#ffffff"
-                borderColor={selectedTheme === "Theme2" ? "rgb(11, 31, 181)" : "#0d4bbf9e"}
-                onClick={() => setSelectedTheme("Theme2")}
-                size={selectedTheme === "Theme2" ? 65 : 50}
-              />
-              <Theme
-                colorA="#061a9a"
-                colorB="#17b6bc"
-                borderColor={selectedTheme === "Theme3" ? "rgb(11, 31, 181)" : "#0d4bbf9e"}
-                onClick={() => setSelectedTheme("Theme3")}
-                size={selectedTheme === "Theme3" ? 65 : 50}
-              />
-              <Theme
-                colorA="#000000"
-                colorB="#ee4c4c"
-                borderColor={selectedTheme === "Theme4" ? "rgb(11, 31, 181)" : "#0d4bbf9e"}
-                onClick={() => setSelectedTheme("Theme4")}
-                size={selectedTheme === "Theme4" ? 65 : 50}
-              />
-              <Theme
-                colorA="#ffffff"
-                colorB="#f3a0ed"
-                borderColor={selectedTheme === "Theme5" ? "rgb(11, 31, 181)" : "#0d4bbf9e"}
-                onClick={() => setSelectedTheme("Theme5")}
-                size={selectedTheme === "Theme5" ? 65 : 50}
-              />
-              <Theme
-                colorA="#ffffff"
-                colorB="#5162ea"
-                borderColor={selectedTheme === "Theme6" ? "rgb(11, 31, 181)" : "#0d4bbf9e"}
-                onClick={() => setSelectedTheme("Theme6")}
-                size={selectedTheme === "Theme6" ? 65 : 50}
-              />
-              <Theme
-                colorA="#ffffff"
-                colorB="#9e65ef"
-                borderColor={selectedTheme === "Theme7" ? "rgb(11, 31, 181)" : "#0d4bbf9e"}
-                onClick={() => setSelectedTheme("Theme7")}
-                size={selectedTheme === "Theme7" ? 65 : 50}
-              />
+              {Object.entries(ThemeColors).map(([themeName, theme]) => (
+                <Theme
+                  key={themeName}
+                  colorA={theme.surface}
+                  colorB={theme.accent}
+                  borderColor={selectedTheme === themeName ? "rgb(11, 31, 181)" : "#0d4bbf9e"}
+                  onClick={() => setSelectedTheme(themeName)}
+                  size={selectedTheme === themeName ? 65 : 50}
+                />
+              ))}
             </div>
 
             <div style={{ marginTop: 10, fontSize: 14, color: "#555" }}>

@@ -7,6 +7,7 @@ import EditShop from "./pages/EditShop"
 import ShopProfileCard from "./pages/ShopProfileCard"
 import ProtectedRoute from "./components/ProtectedRoute"
 import Settings from "./pages/Settings"
+import ShopForge from "./pages/shopforge"
 
 export default function App() {
   return (
@@ -59,6 +60,8 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route path="/shopforge" element={<ShopForge />} />
 
         <Route path="*" element={<div style={{ padding: 24 }}>not found</div>} />
       </Routes>
