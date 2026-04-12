@@ -6,8 +6,9 @@ import PopUp from "../components/PopUp"
 import TagPopUp from "../components/TagPopUp"
 import ImagePopUp from "../components/ImagePopUp"
 import CategoryPopUp from "../components/CategoryPopUp"
+import { useState, useEffect, useMemo, useRef } from "react"
 
-import { useState, useEffect, useMemo } from "react"
+
 
 
 export default function ShopDashboard() {
@@ -19,7 +20,7 @@ export default function ShopDashboard() {
   const [isFilterOpen, setIsFilterOpen] = useState(false)
 
   const [searchTerm, setSearchTerm] = useState("")
-  const [filterOption, setFilterOption] = useState("oldest")
+  const [filterOption, setFilterOption] = useState("newest")
 
   const [isPopUpOpen, setIsPopUpOpen] = useState(false)
   const [popUpMode, setPopUpMode] = useState("")
@@ -38,6 +39,12 @@ export default function ShopDashboard() {
     category: [],
     search: []
   })
+  const tempIdRef = useRef(0)
+
+  function makeTempId() {
+    tempIdRef.current += 1
+    return `temp-${Date.now()}-${tempIdRef.current}`
+  }
 
   const [customCategoryEnabled, setCustomCategoryEnabled] = useState(false)
   const [customCategoryLines, setCustomCategoryLines] = useState([])
@@ -51,6 +58,7 @@ export default function ShopDashboard() {
 
       const formattedProducts = data.map((product) => ({
         ...product,
+        tempId: `db-${product.id}`,
         categoryTags: product.categoryTags || [],
         searchTags: product.searchTags || [],
         images: (product.images || []).map((url, index) => ({
@@ -139,57 +147,7 @@ export default function ShopDashboard() {
     setProducts(updatedProducts)
   }
 
-  async function handleSaveProduct(product, index) {
-    const latestProduct = products[index] || product
 
-    const productToSave = {
-      shopId: shopId,
-      name: latestProduct.name,
-      price: Number(latestProduct.price),
-      stock: Number(latestProduct.stock),
-      categoryTags: latestProduct.categoryTags || [],
-      searchTags: latestProduct.searchTags || [],
-      images: (latestProduct.images || []).map((image) => image.url || image.preview),
-      isActive: latestProduct.isActive ?? true
-    }
-
-    console.log("saving product", {
-      name: latestProduct.name,
-      categoryTags: latestProduct.categoryTags,
-      searchTags: latestProduct.searchTags
-    })
-
-    const isEditingExistingProduct = latestProduct.id != null
-
-    const response = await fetch(
-      isEditingExistingProduct
-        ? `http://localhost:8080/api/products/${latestProduct.id}`
-        : "http://localhost:8080/api/products",
-      {
-        method: isEditingExistingProduct ? "PUT" : "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(productToSave)
-      }
-    )
-
-    const savedProduct = await response.json()
-
-    const updatedProducts = [...products]
-    updatedProducts[index] = {
-      ...updatedProducts[index],
-      ...savedProduct,
-      images: (savedProduct.images || productToSave.images).map((url, imageIndex) => ({
-        id: `${savedProduct.id || index}-image-${imageIndex}`,
-        preview: url,
-        url
-      })),
-      isSaved: true
-    }
-
-    setProducts(updatedProducts)
-  }
 
   async function handleSaveCustomCategory({ enabled, lines }) {
     if (!shopId) return
@@ -218,16 +176,86 @@ export default function ShopDashboard() {
       console.error("Error saving custom category:", error)
     }
   }
+  async function handleSaveProduct(product, index) {
+    const latestProduct = products[index] || product
 
-  async function handleDeleteProduct(product, index) {
-    if (product.id != null) {
-      await fetch(`http://localhost:8080/api/products/${product.id}`, {
-        method: "DELETE"
-      })
+    const productToSave = {
+      shopId: shopId,
+      name: latestProduct.name,
+      price: Number(latestProduct.price),
+      stock: Number(latestProduct.stock),
+      categoryTags: latestProduct.categoryTags || [],
+      searchTags: latestProduct.searchTags || [],
+      images: (latestProduct.images || []).map((image) => image.url || image.preview),
+      isActive: latestProduct.isActive ?? true
     }
 
-    const updatedProducts = products.filter((_, i) => i !== index)
-    setProducts(updatedProducts)
+    const isEditingExistingProduct = latestProduct.id != null
+
+    try {
+      const response = await fetch(
+        isEditingExistingProduct
+          ? `http://localhost:8080/api/products/${latestProduct.id}`
+          : "http://localhost:8080/api/products",
+        {
+          method: isEditingExistingProduct ? "PUT" : "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(productToSave)
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error("Failed to save product")
+      }
+
+      const savedProduct = await response.json()
+
+      const updatedProducts = [...products]
+      updatedProducts[index] = {
+        ...updatedProducts[index],
+        ...savedProduct,
+        tempId: updatedProducts[index].tempId || `db-${savedProduct.id}`,
+        images: (savedProduct.images || productToSave.images).map((url, imageIndex) => ({
+          id: `${savedProduct.id || index}-image-${imageIndex}`,
+          preview: url,
+          url
+        })),
+        isSaved: true
+      }
+
+      setProducts(updatedProducts)
+    } catch (error) {
+      console.error("Error saving product:", error)
+    }
+  }
+  async function handleDeleteProduct(product, index) {
+    try {
+      if (product.id != null) {
+        const response = await fetch(`http://localhost:8080/api/products/${product.id}`, {
+          method: "DELETE"
+        })
+
+        if (!response.ok) {
+          throw new Error("Failed to delete product")
+        }
+      }
+
+      setProducts((prev) =>
+        prev.filter((item, i) => {
+          if (i === index) return false
+
+          if (product.id != null) {
+            return item.id !== product.id
+          }
+
+          return item.tempId !== product.tempId
+        })
+      )
+    } catch (error) {
+      console.error("Error deleting product:", error)
+    }
   }
 
   function openPopUp(mode, index = null, productName = "") {
@@ -750,6 +778,7 @@ export default function ShopDashboard() {
               setProducts([
                 ...products,
                 {
+                  tempId: makeTempId(),
                   shopId: shopId,
                   name: "",
                   price: "",
@@ -788,11 +817,17 @@ export default function ShopDashboard() {
       >
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           {displayedProducts.map((product) => {
-            const index = products.findIndex((p) => p === product)
+            const index = products.findIndex(
+              (p) =>
+                (p.id != null && p.id === product.id) ||
+                (p.id == null && p.tempId === product.tempId)
+            )
+
+            if (index === -1) return null
 
             return (
               <Product
-                key={product.id ?? index}
+                key={product.id ?? product.tempId}
                 product={product}
                 isSaved={product.isSaved}
                 showDelete={deleteMode}

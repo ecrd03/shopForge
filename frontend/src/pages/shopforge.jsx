@@ -85,6 +85,29 @@ function buildCategoryTree(lines = []) {
     return root
 }
 
+function flattenCategoryTree(nodes = []) {
+    const result = []
+    const seen = new Set()
+
+    function walk(items) {
+        for (const item of items) {
+            const key = item.path.join("|||")
+
+            if (!seen.has(key)) {
+                seen.add(key)
+                result.push(item)
+            }
+
+            if (item.children && item.children.length > 0) {
+                walk(item.children)
+            }
+        }
+    }
+
+    walk(nodes)
+    return result
+}
+
 function normalizeTagValue(value) {
     return String(value || "").trim().toLowerCase()
 }
@@ -358,11 +381,7 @@ export default function ShopForge() {
         )
     }, [shop])
 
-
-
     const customCategoryLines = useMemo(() => {
-        if (!shop?.customCategoryEnabled) return []
-
         if (!shop?.customCategoryLines || shop.customCategoryLines.trim() === "") {
             return []
         }
@@ -374,6 +393,12 @@ export default function ShopForge() {
     const categoryTree = useMemo(() => {
         return buildCategoryTree(customCategoryLines)
     }, [customCategoryLines])
+
+    const flatCategoryList = useMemo(() => {
+        return flattenCategoryTree(categoryTree)
+    }, [categoryTree])
+
+
 
     function toggleNode(key) {
         setOpenMap((prev) => ({
@@ -524,10 +549,11 @@ export default function ShopForge() {
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            cursor: "pointer"
+                            cursor: "pointer",
+                            lineHeight: 0
                         }}
                     >
-                        <X size={18} />
+                        <X style={{ width: 22, height: 22, flexShrink: 0 }} />
                     </button>
                 </div>
 
@@ -565,18 +591,51 @@ export default function ShopForge() {
                         <span>All Categories</span>
                     </button>
 
-                    {categoryTree.map((node) => (
-                        <SidebarNode
-                            key={node.path.join("|||")}
-                            node={node}
-                            level={0}
-                            openMap={openMap}
-                            toggleNode={toggleNode}
-                            onSelect={setSelectedCategoryPath}
-                            selectedCategoryPath={selectedCategoryPath}
-                            colors={colors}
-                        />
-                    ))}
+                    {shop?.customCategoryEnabled ? (
+                        categoryTree.map((node) => (
+                            <SidebarNode
+                                key={node.path.join("|||")}
+                                node={node}
+                                level={0}
+                                openMap={openMap}
+                                toggleNode={toggleNode}
+                                onSelect={setSelectedCategoryPath}
+                                selectedCategoryPath={selectedCategoryPath}
+                                colors={colors}
+                            />
+                        ))
+                    ) : (
+                        flatCategoryList.map((node) => {
+                            const key = node.path.join("|||")
+                            const isSelected = selectedCategoryPath.join("|||") === key
+
+                            return (
+                                <button
+                                    key={key}
+                                    type="button"
+                                    onClick={() => setSelectedCategoryPath(node.path)}
+                                    style={{
+                                        width: "100%",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: 8,
+                                        padding: "10px 12px",
+                                        border: "none",
+                                        backgroundColor: isSelected ? colors.surface2 : "transparent",
+                                        color: colors.text,
+                                        cursor: "pointer",
+                                        textAlign: "left",
+                                        borderRadius: 12,
+                                        fontSize: 15,
+                                        fontWeight: isSelected ? 700 : 500,
+                                        marginBottom: 4
+                                    }}
+                                >
+                                    <span>{node.name}</span>
+                                </button>
+                            )
+                        })
+                    )}
 
                     {categoryTree.length === 0 && (
                         <div
@@ -642,11 +701,11 @@ export default function ShopForge() {
                                     alignItems: "center",
                                     justifyContent: "center",
                                     boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-                                    transition: "all 0.2s ease"
+                                    transition: "all 0.2s ease",
+                                    lineHeight: 0
                                 }}
                             >
-                                <Menu size={24} />
-                            </button>
+                                <Menu style={{ width: 22, height: 22, flexShrink: 0 }} strokeWidth={2.5} />                            </button>
 
                             {shop?.logoUrl ? (
                                 <img
