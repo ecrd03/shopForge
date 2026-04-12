@@ -34,7 +34,7 @@ const ThemeColors = {
   },
 
   Theme3: {
-    pageBg: "#edf4ff",
+    pageBg: "#9fbff3b2",
     surface: "#4a58b2",
     surface2: "#539dde",
     border: "#539dde",
