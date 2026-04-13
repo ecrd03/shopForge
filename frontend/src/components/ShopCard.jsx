@@ -25,9 +25,9 @@ export default function ShopCard({ shop, onClick }) {
             src={shop.logoUrl}
             alt={shop.name}
             style={{
-              width: "70%",
-              height: "70%",
-              objectFit: "contain"
+              width: "100%",
+              height: "100%",
+              objectFit: "cover"
             }}
           />
         ) : (

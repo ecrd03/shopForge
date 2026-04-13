@@ -4,15 +4,15 @@ import Header from "../components/Header"
 import ToggleButton from "../components/ToggleButton"
 
 function formatPhone(phone) {
-  if (!phone) return "No phone"
+    if (!phone) return "No phone"
 
-  const cleaned = phone.replace(/\D/g, "")
+    const cleaned = phone.replace(/\D/g, "")
 
-  if (cleaned.length === 10) {
-    return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`
-  }
+    if (cleaned.length === 10) {
+        return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`
+    }
 
-  return phone
+    return phone
 }
 
 
@@ -97,7 +97,12 @@ export default function ShopProfileCard() {
                                 <img
                                     src={shop.logoUrl}
                                     alt={shop.name}
-                                    style={{ width: "75%", height: "75%" }}
+                                    style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        objectFit: "cover",
+                                        borderRadius: 26,
+                                    }}
                                 />
                             ) : (
                                 <div style={{ fontSize: 38 }}>
@@ -157,9 +162,9 @@ export default function ShopProfileCard() {
                                 }}
                                 onClick={() => {
                                     if (!externalLinkEnabled) return
-                                    if (shop.externalLink) {
-                                        window.open(shop.externalLink, "_blank")
-                                    }
+
+                                    const shopUrl = `http://localhost:5173/shop/${displayUsername}`
+                                    window.open(shopUrl, "_blank")
                                 }}
                             >
                                 <img
