@@ -147,22 +147,18 @@ export default function ShopProfileCard() {
 
                             <button
                                 type="button"
-                                disabled={!externalLinkEnabled}
                                 style={{
                                     width: 48,
                                     height: 48,
                                     borderRadius: 12,
                                     border: "1px solid #d1d5db",
-                                    backgroundColor: externalLinkEnabled ? "#fff" : "#f3f4f6",
-                                    cursor: externalLinkEnabled ? "pointer" : "not-allowed",
+                                    backgroundColor: "#fff",
+                                    cursor: "pointer",
                                     display: "flex",
                                     alignItems: "center",
-                                    justifyContent: "center",
-                                    opacity: externalLinkEnabled ? 1 : 0.5
+                                    justifyContent: "center"
                                 }}
                                 onClick={() => {
-                                    if (!externalLinkEnabled) return
-
                                     const shopUrl = `http://localhost:5173/shop/${displayUsername}`
                                     window.open(shopUrl, "_blank")
                                 }}

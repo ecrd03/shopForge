@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { Menu, ChevronRight, ChevronDown, X } from "lucide-react"
 import { getThemeColors } from "../components/ThemeColors"
+import { useParams } from "react-router-dom"
+
 
 function getSocialButtonStyle(colors) {
     return {
@@ -277,13 +279,12 @@ export default function ShopForge() {
 
     const filterRef = useRef(null)
 
-    const user = JSON.parse(localStorage.getItem("user"))
-    const shopId = user?.shopId
+    const { username } = useParams()
 
     useEffect(() => {
         async function loadData() {
-            if (!shopId) {
-                setError("No shop found")
+            if (!username) {
+                setError("No shop username found")
                 setLoading(false)
                 return
             }
@@ -291,6 +292,25 @@ export default function ShopForge() {
             try {
                 setLoading(true)
                 setError("")
+
+                const usersRes = await fetch("http://localhost:8080/api/users")
+
+                if (!usersRes.ok) {
+                    throw new Error("Failed to load users")
+                }
+
+                const usersData = await usersRes.json()
+
+                const matchedUser = usersData.find(
+                    (user) =>
+                        String(user.username || "").toLowerCase() === username.toLowerCase()
+                )
+
+                if (!matchedUser?.shopId) {
+                    throw new Error("Shop not found")
+                }
+
+                const shopId = matchedUser.shopId
 
                 const [shopRes, productsRes] = await Promise.all([
                     fetch(`http://localhost:8080/api/shops/${shopId}`),
@@ -338,7 +358,7 @@ export default function ShopForge() {
         }
 
         loadData()
-    }, [shopId])
+    }, [username])
 
     useEffect(() => {
         function handleClickOutside(event) {

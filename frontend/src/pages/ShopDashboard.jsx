@@ -570,7 +570,10 @@ export default function ShopDashboard() {
         >
           <button
             type="button"
-            onClick={() => window.open("/shopforge", "_blank")}
+            onClick={() => {
+              const username = user?.username || `shop${shopId}`
+              window.open(`/shop/${username}`, "_blank")
+            }}
             style={{
               width: 44,
               height: 44,

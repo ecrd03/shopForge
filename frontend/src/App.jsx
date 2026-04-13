@@ -61,8 +61,8 @@ export default function App() {
           }
         />
 
-        <Route path="/shopforge" element={<ShopForge />} />
-
+        <Route path="/shop/:username" element={<ShopForge />} />
+        
         <Route path="*" element={<div style={{ padding: 24 }}>not found</div>} />
       </Routes>
     </BrowserRouter>
