@@ -40,6 +40,7 @@ export default function Product({
     categoryTags: [],
     searchTags: [],
     images: [],
+    buyingLink: "",
     isActive: true
   }
 
@@ -53,7 +54,7 @@ export default function Product({
   return (
     <div
       style={{
-        width: "116%",
+        width: "100%",
         display: "flex",
         flexDirection: "column",
         gap: 10,
@@ -62,7 +63,6 @@ export default function Product({
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 30 }}>
-        {/* LEFT: toggle */}
         <div style={{ width: 92, display: "flex", justifyContent: "center" }}>
           <ToggleButton
             value={safeProduct.isActive ?? true}
@@ -70,7 +70,6 @@ export default function Product({
           />
         </div>
 
-        {/* RIGHT: pill */}
         <div
           style={{
             flex: 1,
@@ -92,7 +91,7 @@ export default function Product({
             />
           </Cell>
 
-          <Cell divider style={{ flex: 2 }}>
+          <Cell divider style={{ flex: 0.7 }}>
             <input
               value={safeProduct.price}
               onChange={(e) => update("price", e.target.value)}
@@ -101,7 +100,7 @@ export default function Product({
             />
           </Cell>
 
-          <Cell divider style={{ flex: 2 }}>
+          <Cell divider style={{ flex: 0.7 }}>
             <input
               value={safeProduct.stock}
               onChange={(e) => update("stock", e.target.value)}
@@ -109,8 +108,17 @@ export default function Product({
               placeholder="Stock"
             />
           </Cell>
+          
+          <Cell divider style={{ flex: 1.8 }}>
+            <input
+              value={safeProduct.buyingLink}
+              onChange={(e) => update("buyingLink", e.target.value)}
+              style={inputStyle}
+              placeholder="Buying Link"
+            />
+          </Cell>
 
-          <Cell divider style={{ flex: 2, justifyContent: "center" }}>
+          <Cell divider style={{ flex: 1.5, justifyContent: "center" }}>
             <button
               type="button"
               onClick={onOpenTags}
@@ -120,7 +128,7 @@ export default function Product({
             </button>
           </Cell>
 
-          <Cell divider style={{ flex: 2, justifyContent: "center" }}>
+          <Cell divider style={{ flex: 1.5, justifyContent: "center" }}>
             <button
               type="button"
               onClick={onOpenImages}

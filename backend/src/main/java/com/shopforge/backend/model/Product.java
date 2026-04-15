@@ -26,6 +26,9 @@ public class Product {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
+    @Column(name = "buying_link")
+    private String buyingLink;
+
     @Lob
     @Column(name = "images_json", columnDefinition = "LONGTEXT")
     private String imagesJson;
@@ -50,6 +53,7 @@ public class Product {
     public BigDecimal getPrice() { return price; }
     public Integer getStock() { return stock; }
     public Boolean getIsActive() { return isActive; }
+    public String getBuyingLink() { return buyingLink; }
     public String getImagesJson() { return imagesJson; }
 
     public void setShopId(Long shopId) { this.shopId = shopId; }
@@ -57,5 +61,6 @@ public class Product {
     public void setPrice(BigDecimal price) { this.price = price; }
     public void setStock(Integer stock) { this.stock = stock; }
     public void setIsActive(Boolean isActive) { this.isActive = isActive; }
+    public void setBuyingLink(String buyingLink) { this.buyingLink = buyingLink; }
     public void setImagesJson(String imagesJson) { this.imagesJson = imagesJson; }
 }

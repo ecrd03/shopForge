@@ -42,6 +42,7 @@ public class ProductController {
         product.setPrice(request.getPrice());
         product.setStock(request.getStock());
         product.setIsActive(request.getIsActive() != null ? request.getIsActive() : true);
+        product.setBuyingLink(request.getBuyingLink());
         product.setImagesJson(toJson(request.getImages()));
         product.setCategoryTagsJson(toJson(request.getCategoryTags()));
         product.setSearchTagsJson(toJson(request.getSearchTags()));
@@ -60,6 +61,7 @@ public class ProductController {
         existingProduct.setPrice(request.getPrice());
         existingProduct.setStock(request.getStock());
         existingProduct.setIsActive(request.getIsActive() != null ? request.getIsActive() : true);
+        existingProduct.setBuyingLink(request.getBuyingLink());
         existingProduct.setImagesJson(toJson(request.getImages()));
         existingProduct.setCategoryTagsJson(toJson(request.getCategoryTags()));
         existingProduct.setSearchTagsJson(toJson(request.getSearchTags()));
@@ -81,6 +83,7 @@ public class ProductController {
         item.setPrice(product.getPrice());
         item.setStock(product.getStock());
         item.setIsActive(product.getIsActive());
+        item.setBuyingLink(product.getBuyingLink());
         item.setImages(fromJson(product.getImagesJson()));
         item.setCategoryTags(fromJson(product.getCategoryTagsJson()));
         item.setSearchTags(fromJson(product.getSearchTagsJson()));

@@ -1,4 +1,5 @@
 package com.shopforge.backend.model;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ public class ProductResponse {
     private BigDecimal price;
     private Integer stock;
     private Boolean isActive;
+    private String buyingLink;
     private List<String> images = new ArrayList<>();
     private List<String> categoryTags = new ArrayList<>();
     private List<String> searchTags = new ArrayList<>();
@@ -31,6 +33,9 @@ public class ProductResponse {
 
     public Boolean getIsActive() { return isActive; }
     public void setIsActive(Boolean isActive) { this.isActive = isActive; }
+
+    public String getBuyingLink() { return buyingLink; }
+    public void setBuyingLink(String buyingLink) { this.buyingLink = buyingLink; }
 
     public List<String> getImages() { return images; }
     public void setImages(List<String> images) { this.images = images; }

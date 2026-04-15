@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import ToggleButton from "../components/ToggleButton"
+import ToggleButton from "./ToggleButton"
 
 const chipStyle = {
     padding: "8px 16px",

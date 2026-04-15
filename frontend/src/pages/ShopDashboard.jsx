@@ -66,10 +66,10 @@ export default function ShopDashboard() {
           preview: url,
           url
         })),
+        buyingLink: product.buyingLink || "",
         isActive: product.isActive ?? true,
         isSaved: true
       }))
-
       const categoryTagSet = new Set()
       const searchTagSet = new Set()
 
@@ -178,6 +178,7 @@ export default function ShopDashboard() {
   }
   async function handleSaveProduct(product, index) {
     const latestProduct = products[index] || product
+    const updatedProducts = [...products]
 
     const productToSave = {
       shopId: shopId,
@@ -187,6 +188,7 @@ export default function ShopDashboard() {
       categoryTags: latestProduct.categoryTags || [],
       searchTags: latestProduct.searchTags || [],
       images: (latestProduct.images || []).map((image) => image.url || image.preview),
+      buyingLink: latestProduct.buyingLink || "",
       isActive: latestProduct.isActive ?? true
     }
 
@@ -212,10 +214,10 @@ export default function ShopDashboard() {
 
       const savedProduct = await response.json()
 
-      const updatedProducts = [...products]
       updatedProducts[index] = {
         ...updatedProducts[index],
         ...savedProduct,
+        buyingLink: savedProduct.buyingLink || productToSave.buyingLink || "",
         tempId: updatedProducts[index].tempId || `db-${savedProduct.id}`,
         images: (savedProduct.images || productToSave.images).map((url, imageIndex) => ({
           id: `${savedProduct.id || index}-image-${imageIndex}`,
@@ -230,6 +232,7 @@ export default function ShopDashboard() {
       console.error("Error saving product:", error)
     }
   }
+
   async function handleDeleteProduct(product, index) {
     try {
       if (product.id != null) {
@@ -789,6 +792,7 @@ export default function ShopDashboard() {
                   categoryTags: [],
                   searchTags: [],
                   images: [],
+                  buyingLink: "",
                   isActive: true,
                   isSaved: false
                 }
@@ -877,7 +881,9 @@ export default function ShopDashboard() {
               />
             )
           })}
+          <div style={{ marginTop: 20 }} />
         </div>
+        
       </div>
 
       <div

@@ -272,6 +272,8 @@ export default function ShopForge() {
     const [error, setError] = useState("")
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const [filterOpen, setFilterOpen] = useState(false)
+    const [selectedProduct, setSelectedProduct] = useState(null)
+    const [selectedImageIndex, setSelectedImageIndex] = useState(0)
 
     const [selectedCategoryPath, setSelectedCategoryPath] = useState([])
     const [openMap, setOpenMap] = useState({})
@@ -280,6 +282,33 @@ export default function ShopForge() {
     const filterRef = useRef(null)
 
     const { username } = useParams()
+
+
+    function openProductModal(product) {
+        setSelectedProduct(product)
+        setSelectedImageIndex(0)
+    }
+
+    function closeProductModal() {
+        setSelectedProduct(null)
+        setSelectedImageIndex(0)
+    }
+
+    function showPrevImage() {
+        if (!selectedProduct?.images?.length) return
+
+        setSelectedImageIndex((prev) =>
+            prev === 0 ? selectedProduct.images.length - 1 : prev - 1
+        )
+    }
+
+    function showNextImage() {
+        if (!selectedProduct?.images?.length) return
+
+        setSelectedImageIndex((prev) =>
+            prev === selectedProduct.images.length - 1 ? 0 : prev + 1
+        )
+    }
 
     useEffect(() => {
         async function loadData() {
@@ -409,6 +438,27 @@ export default function ShopForge() {
         const parsed = safeJsonParse(shop.customCategoryLines, [])
         return Array.isArray(parsed) ? parsed : []
     }, [shop])
+
+    const flatProductCategoryList = useMemo(() => {
+        const seen = new Set()
+
+        products.forEach((product) => {
+            getProductCategoryTags(product).forEach((tag) => {
+                const cleaned = String(tag || "").trim()
+                if (cleaned) {
+                    seen.add(cleaned)
+                }
+            })
+        })
+
+        return Array.from(seen)
+            .sort((a, b) => a.localeCompare(b))
+            .map((tag) => ({
+                name: tag,
+                path: [tag],
+                children: []
+            }))
+    }, [products])
 
     const categoryTree = useMemo(() => {
         return buildCategoryTree(customCategoryLines)
@@ -625,7 +675,7 @@ export default function ShopForge() {
                             />
                         ))
                     ) : (
-                        flatCategoryList.map((node) => {
+                        flatProductCategoryList.map((node) => {
                             const key = node.path.join("|||")
                             const isSelected = selectedCategoryPath.join("|||") === key
 
@@ -657,16 +707,30 @@ export default function ShopForge() {
                         })
                     )}
 
-                    {categoryTree.length === 0 && (
-                        <div
-                            style={{
-                                padding: 12,
-                                color: colors.textSoft,
-                                fontSize: 14
-                            }}
-                        >
-                            No custom categories yet
-                        </div>
+                    {shop?.customCategoryEnabled ? (
+                        categoryTree.length === 0 && (
+                            <div
+                                style={{
+                                    padding: 12,
+                                    color: colors.textSoft,
+                                    fontSize: 14
+                                }}
+                            >
+                                No categories yet
+                            </div>
+                        )
+                    ) : (
+                        flatProductCategoryList.length === 0 && (
+                            <div
+                                style={{
+                                    padding: 12,
+                                    color: colors.textSoft,
+                                    fontSize: 14
+                                }}
+                            >
+                                No categories yet
+                            </div>
+                        )
                     )}
                 </div>
             </div>
@@ -993,7 +1057,11 @@ export default function ShopForge() {
                                 : ""
 
                         return (
-                            <div key={product.id} style={itemCardStyle}>
+                            <div
+                                key={product.id}
+                                style={itemCardStyle}
+                                onClick={() => openProductModal(product)}
+                            >
                                 <div style={itemImageStyle}>
                                     {firstImage ? (
                                         <img
@@ -1049,6 +1117,235 @@ export default function ShopForge() {
                     </div>
                 )}
             </div>
+            {selectedProduct && (
+                <>
+                    {console.log(selectedProduct.buyingLink)}
+                    <div
+                        onClick={closeProductModal}
+                        style={{
+                            position: "fixed",
+                            inset: 0,
+                            backgroundColor: "rgba(0,0,0,0.45)",
+                            zIndex: 100
+                        }}
+                    />
+
+                    <div
+                        style={{
+                            position: "fixed",
+                            top: "50%",
+                            left: "50%",
+                            transform: "translate(-50%, -50%)",
+                            width: "min(92vw, 520px)",
+                            backgroundColor: colors.surface,
+                            border: `1px solid ${colors.border}`,
+                            borderRadius: 24,
+                            padding: 20,
+                            zIndex: 101,
+                            boxShadow: "0 20px 50px rgba(0,0,0,0.25)"
+                        }}
+                    >
+                        <button
+                            type="button"
+                            onClick={closeProductModal}
+                            style={{
+                                position: "absolute",
+                                top: 14,
+                                right: 14,
+                                width: 20,
+                                height: 40,
+                                borderRadius: 12,
+                                border: `1px solid ${colors.border}`,
+                                backgroundColor: colors.buttonBg,
+                                color: colors.buttonText,
+                                cursor: "pointer",
+
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+
+                                fontSize: 16,
+                                lineHeight: 1
+                            }}
+                        >
+                            ×
+                        </button>
+
+                        <div
+                            style={{
+                                fontSize: 24,
+                                fontWeight: 700,
+                                color: colors.text,
+                                marginBottom: 14,
+                                paddingRight: 40
+                            }}
+                        >
+                            {selectedProduct.name}
+                        </div>
+
+                        <div
+                            style={{
+                                position: "relative",
+                                width: "100%",
+                                height: 450,
+                                borderRadius: 20,
+                                overflow: "hidden",
+                                border: `1px solid ${colors.border}`,
+                                backgroundColor: colors.surface2,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center"
+                            }}
+                        >
+                            {selectedProduct.images?.length > 0 ? (
+                                <img
+                                    src={selectedProduct.images[selectedImageIndex]}
+                                    alt={selectedProduct.name}
+                                    style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        objectFit: "cover"
+                                    }}
+                                />
+                            ) : (
+                                <div
+                                    style={{
+                                        width: 100,
+                                        height: 100,
+                                        borderRadius: 20,
+                                        backgroundColor: colors.placeholderBlock
+                                    }}
+                                />
+                            )}
+
+                            {selectedProduct.images?.length > 1 && (
+                                <>
+                                    <button
+                                        type="button"
+                                        onClick={showPrevImage}
+                                        style={{
+                                            position: "absolute",
+                                            left: 12,
+                                            top: "50%",
+                                            transform: "translateY(-50%)",
+                                            width: 42,
+                                            height: 42,
+                                            borderRadius: "50%",
+                                            border: "none",
+                                            backgroundColor: "rgba(0,0,0,0.55)",
+                                            color: "#fff",
+                                            cursor: "pointer",
+                                            fontSize: 20,
+                                            fontWeight: 700,
+
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+
+                                            fontSize: 17,
+                                            lineHeight: 1
+                                        }}
+                                    >
+                                        ‹
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={showNextImage}
+                                        style={{
+                                            position: "absolute",
+                                            right: 12,
+                                            top: "50%",
+                                            transform: "translateY(-50%)",
+                                            width: 42,
+                                            height: 42,
+                                            borderRadius: "50%",
+                                            border: "none",
+                                            backgroundColor: "rgba(0,0,0,0.55)",
+                                            color: "#fff",
+                                            cursor: "pointer",
+                                            fontSize: 20,
+                                            fontWeight: 700,
+
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+
+                                            fontSize: 17,
+                                            lineHeight: 1
+                                        }}
+                                    >
+                                        ›
+                                    </button>
+                                </>
+                            )}
+                        </div>
+
+                        {selectedProduct.images?.length > 1 && (
+                            <div
+                                style={{
+                                    marginTop: 10,
+                                    textAlign: "center",
+                                    fontSize: 14,
+                                    color: colors.textSoft
+                                }}
+                            >
+                                {selectedImageIndex + 1} / {selectedProduct.images.length}
+                            </div>
+                        )}
+
+                        <div
+                            style={{
+                                marginTop: 18,
+                                display: "flex",
+                                justifyContent: "center"
+                            }}
+                        >
+                            {selectedProduct.buyingLink ? (
+                                <a
+                                    href={
+                                        selectedProduct.buyingLink?.startsWith("http://") ||
+                                            selectedProduct.buyingLink?.startsWith("https://")
+                                            ? selectedProduct.buyingLink
+                                            : `https://${selectedProduct.buyingLink}`
+                                    }
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    style={{
+                                        padding: "12px 22px",
+                                        borderRadius: 16,
+                                        border: `1px solid ${colors.border}`,
+                                        backgroundColor: colors.buttonBg,
+                                        color: colors.buttonText,
+                                        textDecoration: "none",
+                                        fontSize: 15,
+                                        fontWeight: 600
+                                    }}
+                                >
+                                    Buying Link
+                                </a>
+                            ) : (
+                                <button
+                                    type="button"
+                                    disabled
+                                    style={{
+                                        padding: "12px 22px",
+                                        borderRadius: 16,
+                                        border: `1px solid ${colors.border}`,
+                                        backgroundColor: colors.surface2,
+                                        color: colors.textSoft,
+                                        fontSize: 15,
+                                        fontWeight: 600,
+                                        cursor: "not-allowed"
+                                    }}
+                                >
+                                    Buying Link
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                </>
+            )}
         </div>
     )
 }

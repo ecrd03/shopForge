@@ -488,6 +488,7 @@ export default function EditShop() {
               enabled={links.ebay.enabled}
               onToggleChange={(enabled) => updateLink("ebay", "enabled", enabled)}
             />
+            <div style={{ marginTop: 20 }} />
           </div>
         </div>
       </div>
