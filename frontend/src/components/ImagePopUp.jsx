@@ -24,7 +24,6 @@ export default function ImagePopUp({
         setIsChoosingCover(false)
     }
 
-    
 
 
 
@@ -37,10 +36,8 @@ export default function ImagePopUp({
 
             const uploadedImages = await Promise.all(
                 files.map(async (file, index) => {
-                    const imageRef = ref(
-                        storage,
-                        `product-images/${Date.now()}-${index}-${file.name}`
-                    )
+                    const path = `product-images/${Date.now()}-${index}-${file.name}`
+                    const imageRef = ref(storage, path)
 
                     await uploadBytes(imageRef, file)
                     const url = await getDownloadURL(imageRef)
@@ -49,7 +46,8 @@ export default function ImagePopUp({
                         id: `${Date.now()}-${index}`,
                         file,
                         preview: url,
-                        url
+                        url,
+                        path
                     }
                 })
             )
@@ -99,7 +97,7 @@ export default function ImagePopUp({
                                             type="button"
                                             onClick={(e) => {
                                                 e.stopPropagation()
-                                                onRemoveImage(image.id)
+                                                onRemoveImage(image)
                                             }}
                                             style={removeButtonStyle}
                                         >

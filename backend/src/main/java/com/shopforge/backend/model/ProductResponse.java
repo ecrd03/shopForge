@@ -12,7 +12,7 @@ public class ProductResponse {
     private Integer stock;
     private Boolean isActive;
     private String buyingLink;
-    private List<String> images = new ArrayList<>();
+    private List<ProductImageRequest> images = new ArrayList<>();
     private List<String> categoryTags = new ArrayList<>();
     private List<String> searchTags = new ArrayList<>();
 
@@ -37,8 +37,8 @@ public class ProductResponse {
     public String getBuyingLink() { return buyingLink; }
     public void setBuyingLink(String buyingLink) { this.buyingLink = buyingLink; }
 
-    public List<String> getImages() { return images; }
-    public void setImages(List<String> images) { this.images = images; }
+    public List<ProductImageRequest> getImages() { return images; }
+    public void setImages(List<ProductImageRequest> images) { this.images = images; }
 
     public List<String> getCategoryTags() { return categoryTags; }
     public void setCategoryTags(List<String> categoryTags) { this.categoryTags = categoryTags; }

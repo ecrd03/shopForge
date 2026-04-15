@@ -6,6 +6,8 @@ import PopUp from "../components/PopUp"
 import TagPopUp from "../components/TagPopUp"
 import ImagePopUp from "../components/ImagePopUp"
 import CategoryPopUp from "../components/CategoryPopUp"
+import { storage } from "../firebase"
+import { ref, deleteObject } from "firebase/storage"
 import { useState, useEffect, useMemo, useRef } from "react"
 
 
@@ -61,11 +63,23 @@ export default function ShopDashboard() {
         tempId: `db-${product.id}`,
         categoryTags: product.categoryTags || [],
         searchTags: product.searchTags || [],
-        images: (product.images || []).map((url, index) => ({
-          id: `${product.id || "product"}-image-${index}`,
-          preview: url,
-          url
-        })),
+        images: (product.images || []).map((image, index) => {
+          if (typeof image === "string") {
+            return {
+              id: `${product.id || "product"}-image-${index}`,
+              preview: image,
+              url: image,
+              path: ""
+            }
+          }
+
+          return {
+            id: image.id || `${product.id || "product"}-image-${index}`,
+            preview: image.preview || image.url || "",
+            url: image.url || "",
+            path: image.path || ""
+          }
+        }),
         buyingLink: product.buyingLink || "",
         isActive: product.isActive ?? true,
         isSaved: true
@@ -187,7 +201,12 @@ export default function ShopDashboard() {
       stock: Number(latestProduct.stock),
       categoryTags: latestProduct.categoryTags || [],
       searchTags: latestProduct.searchTags || [],
-      images: (latestProduct.images || []).map((image) => image.url || image.preview),
+      images: (latestProduct.images || []).map((image, imageIndex) => ({
+        id: image.id || `${latestProduct.id || "product"}-image-${imageIndex}`,
+        preview: image.preview || image.url || "",
+        url: image.url || image.preview || "",
+        path: image.path || ""
+      })),
       buyingLink: latestProduct.buyingLink || "",
       isActive: latestProduct.isActive ?? true
     }
@@ -219,11 +238,23 @@ export default function ShopDashboard() {
         ...savedProduct,
         buyingLink: savedProduct.buyingLink || productToSave.buyingLink || "",
         tempId: updatedProducts[index].tempId || `db-${savedProduct.id}`,
-        images: (savedProduct.images || productToSave.images).map((url, imageIndex) => ({
-          id: `${savedProduct.id || index}-image-${imageIndex}`,
-          preview: url,
-          url
-        })),
+        images: (savedProduct.images || productToSave.images).map((image, imageIndex) => {
+          if (typeof image === "string") {
+            return {
+              id: `${savedProduct.id || index}-image-${imageIndex}`,
+              preview: image,
+              url: image,
+              path: ""
+            }
+          }
+
+          return {
+            id: image.id || `${savedProduct.id || index}-image-${imageIndex}`,
+            preview: image.preview || image.url || "",
+            url: image.url || "",
+            path: image.path || ""
+          }
+        }),
         isSaved: true
       }
 
@@ -391,19 +422,29 @@ export default function ShopDashboard() {
     setProducts(updatedProducts)
   }
 
-  function handleRemoveImage(imageId) {
+  async function handleRemoveImage(imageToRemove) {
     if (activeProductIndex === null) return
 
-    const updatedProducts = [...products]
-    const currentProduct = updatedProducts[activeProductIndex]
+    try {
+      if (imageToRemove.path) {
+        const imageRef = ref(storage, imageToRemove.path)
+        await deleteObject(imageRef)
+      }
 
-    updatedProducts[activeProductIndex] = {
-      ...currentProduct,
-      images: currentProduct.images.filter((image) => image.id !== imageId),
-      isSaved: false
+      const updatedProducts = [...products]
+      const currentProduct = updatedProducts[activeProductIndex]
+
+      updatedProducts[activeProductIndex] = {
+        ...currentProduct,
+        images: currentProduct.images.filter((image) => image.id !== imageToRemove.id),
+        isSaved: false
+      }
+
+      setProducts(updatedProducts)
+    } catch (error) {
+      console.error("Error deleting image:", error)
+      alert("Failed to delete image")
     }
-
-    setProducts(updatedProducts)
   }
 
   const displayedProducts = useMemo(() => {
@@ -883,7 +924,7 @@ export default function ShopDashboard() {
           })}
           <div style={{ marginTop: 20 }} />
         </div>
-        
+
       </div>
 
       <div

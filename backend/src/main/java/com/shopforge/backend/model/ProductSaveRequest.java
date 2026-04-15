@@ -12,7 +12,7 @@ public class ProductSaveRequest {
     private String buyingLink;
     private List<String> categoryTags;
     private List<String> searchTags;
-    private List<String> images;
+    private List<ProductImageRequest> images;
 
     public Long getShopId() { return shopId; }
     public String getName() { return name; }
@@ -22,7 +22,7 @@ public class ProductSaveRequest {
     public String getBuyingLink() { return buyingLink; }
     public List<String> getCategoryTags() { return categoryTags; }
     public List<String> getSearchTags() { return searchTags; }
-    public List<String> getImages() { return images; }
+    public List<ProductImageRequest> getImages() { return images; }
 
     public void setShopId(Long shopId) { this.shopId = shopId; }
     public void setName(String name) { this.name = name; }
@@ -32,5 +32,5 @@ public class ProductSaveRequest {
     public void setBuyingLink(String buyingLink) { this.buyingLink = buyingLink; }
     public void setCategoryTags(List<String> categoryTags) { this.categoryTags = categoryTags; }
     public void setSearchTags(List<String> searchTags) { this.searchTags = searchTags; }
-    public void setImages(List<String> images) { this.images = images; }
+    public void setImages(List<ProductImageRequest> images) { this.images = images; }
 }

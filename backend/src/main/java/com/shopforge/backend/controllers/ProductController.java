@@ -3,6 +3,7 @@ package com.shopforge.backend.controllers;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shopforge.backend.model.Product;
+import com.shopforge.backend.model.ProductImageRequest;
 import com.shopforge.backend.model.ProductResponse;
 import com.shopforge.backend.model.ProductSaveRequest;
 import com.shopforge.backend.repo.ProductRepository;
@@ -84,13 +85,13 @@ public class ProductController {
         item.setStock(product.getStock());
         item.setIsActive(product.getIsActive());
         item.setBuyingLink(product.getBuyingLink());
-        item.setImages(fromJson(product.getImagesJson()));
+        item.setImages(fromImageJson(product.getImagesJson()));
         item.setCategoryTags(fromJson(product.getCategoryTagsJson()));
         item.setSearchTags(fromJson(product.getSearchTagsJson()));
         return item;
     }
 
-    private String toJson(List<String> values) {
+    private String toJson(Object values) {
         try {
             return objectMapper.writeValueAsString(values == null ? new ArrayList<>() : values);
         } catch (Exception e) {
@@ -104,6 +105,46 @@ public class ProductController {
                 return new ArrayList<>();
             }
             return objectMapper.readValue(json, new TypeReference<List<String>>() {});
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
+    }
+
+    private List<ProductImageRequest> fromImageJson(String json) {
+        try {
+            if (json == null || json.isBlank()) {
+                return new ArrayList<>();
+            }
+
+            String trimmedJson = json.trim();
+
+            if (trimmedJson.startsWith("[\"")) {
+                List<String> oldUrls = objectMapper.readValue(
+                        trimmedJson,
+                        new TypeReference<List<String>>() {}
+                );
+
+                List<ProductImageRequest> convertedImages = new ArrayList<>();
+
+                for (int i = 0; i < oldUrls.size(); i++) {
+                    String url = oldUrls.get(i);
+
+                    ProductImageRequest image = new ProductImageRequest();
+                    image.setId("legacy-image-" + i);
+                    image.setPreview(url);
+                    image.setUrl(url);
+                    image.setPath("");
+
+                    convertedImages.add(image);
+                }
+
+                return convertedImages;
+            }
+
+            return objectMapper.readValue(
+                    trimmedJson,
+                    new TypeReference<List<ProductImageRequest>>() {}
+            );
         } catch (Exception e) {
             return new ArrayList<>();
         }

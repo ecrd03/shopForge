@@ -224,6 +224,13 @@ function SidebarNode({
         </div>
     )
 }
+function getImageSrc(image) {
+    if (!image) return ""
+
+    if (typeof image === "string") return image
+
+    return image.preview || image.url || ""
+}
 
 function FilterOption({
     label,
@@ -369,11 +376,29 @@ export default function ShopForge() {
                         : typeof product.searchTags === "string"
                             ? safeJsonParse(product.searchTags, [])
                             : [],
-                    images: Array.isArray(product.images)
-                        ? product.images
-                        : typeof product.images === "string"
-                            ? safeJsonParse(product.images, [])
-                            : []
+                    images: (
+                        Array.isArray(product.images)
+                            ? product.images
+                            : typeof product.images === "string"
+                                ? safeJsonParse(product.images, [])
+                                : []
+                    ).map((image, index) => {
+                        if (typeof image === "string") {
+                            return {
+                                id: `${product.id || "product"}-image-${index}`,
+                                preview: image,
+                                url: image,
+                                path: ""
+                            }
+                        }
+
+                        return {
+                            id: image.id || `${product.id || "product"}-image-${index}`,
+                            preview: image.preview || image.url || "",
+                            url: image.url || "",
+                            path: image.path || ""
+                        }
+                    }),
                 }))
 
                 setShop(shopData)
@@ -1053,7 +1078,7 @@ export default function ShopForge() {
                     {filteredProducts.map((product) => {
                         const firstImage =
                             Array.isArray(product.images) && product.images.length > 0
-                                ? product.images[0]
+                                ? getImageSrc(product.images[0])
                                 : ""
 
                         return (
@@ -1199,7 +1224,7 @@ export default function ShopForge() {
                         >
                             {selectedProduct.images?.length > 0 ? (
                                 <img
-                                    src={selectedProduct.images[selectedImageIndex]}
+                                    src={getImageSrc(selectedProduct.images[selectedImageIndex])}
                                     alt={selectedProduct.name}
                                     style={{
                                         width: "100%",
@@ -1235,7 +1260,7 @@ export default function ShopForge() {
                                             backgroundColor: "rgba(0,0,0,0.55)",
                                             color: "#fff",
                                             cursor: "pointer",
-                                            fontSize: 20,
+
                                             fontWeight: 700,
 
                                             display: "flex",
@@ -1264,15 +1289,7 @@ export default function ShopForge() {
                                             backgroundColor: "rgba(0,0,0,0.55)",
                                             color: "#fff",
                                             cursor: "pointer",
-                                            fontSize: 20,
                                             fontWeight: 700,
-
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-
-                                            fontSize: 17,
-                                            lineHeight: 1
                                         }}
                                     >
                                         ›
