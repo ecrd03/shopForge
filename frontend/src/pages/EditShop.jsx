@@ -228,7 +228,7 @@ export default function EditShop() {
         display: "flex",
         flexDirection: "column",
         padding: 24,
-        gap: 24,
+        gap: 20,
         boxSizing: "border-box"
       }}
     >
@@ -376,7 +376,7 @@ export default function EditShop() {
                 marginTop: 12,
                 display: "flex",
                 alignItems: "center",
-                gap: 22
+                gap: 5
               }}
             >
               {Object.entries(ThemeColors).map(([themeName, theme]) => (
@@ -409,10 +409,10 @@ export default function EditShop() {
 
           <div
             style={{
-              marginTop: 18,
+              marginTop: 22,
               display: "flex",
               flexDirection: "column",
-              gap: 5,
+              gap: 0,
               maxHeight: "62vh",
               overflowY: "auto"
             }}
@@ -499,7 +499,7 @@ export default function EditShop() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          marginTop: -8
+          marginTop: -5
         }}
       >
         <button

@@ -116,7 +116,59 @@ const ThemeColors = {
     placeholderBlock: "#ddd6fe",
     accent: "#9e65ef",
     accentSoft: "#c4b5fd"
+  },
+
+  Theme8: {
+    pageBg: "#ffeeee",
+    surface: "#ffffff",
+    surface2: "#ffe0e0",
+    border: "#ea5151",
+    borderSoft: "#fec7c7",
+    text: "#4b1b1b",
+    textSoft: "#812e2e",
+    muted: "#ca3838",
+    buttonBg: "#ea5151",
+    buttonText: "#ffffff",
+    inputBg: "#ffffff",
+    placeholderBlock: "#fec7c7",
+    accent: "#ea5151",
+    accentSoft: "#f88181"
+  },
+
+  Theme9: {
+    pageBg: "#def5ea",
+    surface: "#ffffff",
+    surface2: "#e7fff1",
+    border: "#65ef88",
+    borderSoft: "#d6fef0",
+    text: "#076456",
+    textSoft: "#21b670",
+    muted: "#3aed9f",
+    buttonBg: "#6adda5",
+    buttonText: "#ffffff",
+    inputBg: "#ffffff",
+    placeholderBlock: "#d6feea",
+    accent: "#65efba",
+    accentSoft: "#b5fdeb"
+  },
+
+  Theme10: {
+    pageBg: "#faf8f5",
+    surface: "#ffffff",
+    surface2: "#f4efe9bf",
+    border: "#4e3115",
+    borderSoft: "#f0ebe6",
+    text: "#4a3b32",
+    textSoft: "#5b4537",
+    muted: "#d6cdc4",
+    buttonBg: "#6b4e3db8",
+    buttonText: "#ffffff",
+    inputBg: "#ffffff",
+    placeholderBlock: "#f4efe9",
+    accent: "#6b4e3d",
+    accentSoft: "#a68a7c"
   }
+  
 }
 
 export function getThemeColors(themeName) {

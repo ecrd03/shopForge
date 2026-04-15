@@ -345,7 +345,7 @@ const saveButtonStyle = {
 /* left side */
 
 const leftTagOuterStyle = {
-    width: 165,
+    width: 210,
     height: 380,
     border: "1px solid #d1d5db",
     borderRadius: 18,
@@ -361,7 +361,7 @@ const leftTagInnerScrollStyle = {
     padding: 10,
     display: "flex",
     flexDirection: "column",
-    gap: 10,
+    gap: 7,
     boxSizing: "border-box"
 }
 
@@ -394,7 +394,7 @@ const rightPanelInnerScrollStyle = {
     overflowY: "auto",
     display: "flex",
     flexDirection: "column",
-    gap: 12,
+    gap: 1,
     paddingRight: 6,
     boxSizing: "border-box"
 }
@@ -402,7 +402,7 @@ const rightPanelInnerScrollStyle = {
 const lineWrapStyle = {
     display: "flex",
     alignItems: "stretch",
-    gap: 12,
+    gap: 1,
     flexShrink: 0
 }
 
@@ -431,12 +431,12 @@ const lineRowStyle = {
     flex: 1,
     display: "flex",
     alignItems: "center",
-    gap: 12,
+    gap: 7,
     flexWrap: "wrap",
     padding: "10px 8px",
     borderRadius: 12,
     cursor: "pointer",
-    minHeight: 56
+    minHeight: 20
 }
 
 const lineNumberStyle = {
