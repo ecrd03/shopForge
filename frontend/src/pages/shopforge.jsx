@@ -508,6 +508,8 @@ export default function ShopForge() {
         const trimmedSearch = search.trim().toLowerCase()
 
         result = result.filter((product) => {
+            const isVisible = product.isActive !== false
+
             const matchesName = (product.name || "")
                 .toLowerCase()
                 .includes(trimmedSearch)
@@ -526,10 +528,13 @@ export default function ShopForge() {
             )
 
             return (
-                (trimmedSearch === "" ||
+                isVisible &&
+                (
+                    trimmedSearch === "" ||
                     matchesName ||
                     matchesCategoryTag ||
-                    matchesSearchTag) &&
+                    matchesSearchTag
+                ) &&
                 matchesCategory
             )
         })
@@ -1311,18 +1316,18 @@ export default function ShopForge() {
                             </div>
                         )}
 
-                        <div
-                            style={{
-                                marginTop: 18,
-                                display: "flex",
-                                justifyContent: "center"
-                            }}
-                        >
-                            {selectedProduct.buyingLink ? (
+                        {selectedProduct.buyingLink && selectedProduct.buyingLink.trim() !== "" && (
+                            <div
+                                style={{
+                                    marginTop: 18,
+                                    display: "flex",
+                                    justifyContent: "center"
+                                }}
+                            >
                                 <a
                                     href={
-                                        selectedProduct.buyingLink?.startsWith("http://") ||
-                                            selectedProduct.buyingLink?.startsWith("https://")
+                                        selectedProduct.buyingLink.startsWith("http://") ||
+                                            selectedProduct.buyingLink.startsWith("https://")
                                             ? selectedProduct.buyingLink
                                             : `https://${selectedProduct.buyingLink}`
                                     }
@@ -1341,28 +1346,13 @@ export default function ShopForge() {
                                 >
                                     Buying Link
                                 </a>
-                            ) : (
-                                <button
-                                    type="button"
-                                    disabled
-                                    style={{
-                                        padding: "12px 22px",
-                                        borderRadius: 16,
-                                        border: `1px solid ${colors.border}`,
-                                        backgroundColor: colors.surface2,
-                                        color: colors.textSoft,
-                                        fontSize: 15,
-                                        fontWeight: 600,
-                                        cursor: "not-allowed"
-                                    }}
-                                >
-                                    Buying Link
-                                </button>
-                            )}
-                        </div>
+                            </div>
+                        )}
                     </div>
                 </>
             )}
+                      <div style={{ marginTop: 80 }} />
+
         </div>
     )
 }
