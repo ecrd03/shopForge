@@ -262,7 +262,7 @@ function FilterOption({
                     height: 16,
                     borderRadius: 4,
                     border: `1px solid ${colors.border}`,
-                    backgroundColor: checked ? colors.buttonText : "#ffffff",
+                    backgroundColor: checked ? colors.border : "#ffffff",
                     flexShrink: 0
                 }}
             />

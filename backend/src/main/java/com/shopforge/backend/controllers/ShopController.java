@@ -150,12 +150,10 @@ public class ShopController {
         Shop shop = shops.findById(id)
                 .orElseThrow(() -> new RuntimeException("Shop not found"));
 
-        // save toggle
         shop.setCustomCategoryEnabled(
                 request.getEnabled() != null ? request.getEnabled() : false
         );
 
-        // save lines as JSON
         try {
             String linesJson = objectMapper.writeValueAsString(
                     request.getLines() == null ? new ArrayList<>() : request.getLines()
@@ -167,7 +165,6 @@ public class ShopController {
 
         Shop savedShop = shops.save(shop);
 
-        // build response
         CustomCategoryResponse response = new CustomCategoryResponse();
         response.setEnabled(savedShop.getCustomCategoryEnabled());
 

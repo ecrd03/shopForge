@@ -14,7 +14,6 @@ export default function SideBar({
     return name.length > 25 ? name.slice(0, 20) + "..." : name
   }
 
-  // close on ESC
   useEffect(() => {
     if (!open) return
     function onKeyDown(e) {
