@@ -139,17 +139,17 @@ const ThemeColors = {
     pageBg: "#def5ea",
     surface: "#ffffff",
     surface2: "#e7fff1",
-    border: "#65ef88",
-    borderSoft: "#d6fef0",
-    text: "#076456",
+    border: "#27e356",
+    borderSoft: "#27e356",
+    text: "#0b8e3b",
     textSoft: "#21b670",
     muted: "#3aed9f",
-    buttonBg: "#6adda5",
+    buttonBg: "#16e569",
     buttonText: "#ffffff",
     inputBg: "#ffffff",
     placeholderBlock: "#d6feea",
-    accent: "#65efba",
-    accentSoft: "#b5fdeb"
+    accent: "#44e7a3",
+    accentSoft: "#b5fddd"
   },
 
   Theme10: {
@@ -167,7 +167,24 @@ const ThemeColors = {
     placeholderBlock: "#f4efe9",
     accent: "#6b4e3d",
     accentSoft: "#a68a7c"
-  }
+  },
+
+  Theme11: {
+    pageBg: "#141414",
+    surface: "#000000",
+    surface2: "#1f1f1f",
+    border: "#4c59ee",
+    borderSoft: "#3a1a1a",
+    text: "#ffffff",
+    textSoft: "#ffffff",
+    muted: "#a5d2fc",
+    buttonBg: "#4c92ee",
+    buttonText: "#ffffff",
+    inputBg: "#1a1a1a",
+    placeholderBlock: "#2a2a2a",
+    accent: "#4ca0ee",
+    accentSoft: "#71a5f8"
+  },
   
 }
 
