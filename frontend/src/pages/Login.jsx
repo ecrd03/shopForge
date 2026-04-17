@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { GoogleLogin } from "@react-oauth/google"
 
 export default function Login() {
   const navigate = useNavigate()
@@ -37,6 +38,41 @@ export default function Login() {
     } finally {
       setLoading(false)
     }
+  }
+
+  async function handleGoogleSuccess(credentialResponse) {
+    setError("")
+    setLoading(true)
+
+    try {
+      const res = await fetch("http://localhost:8080/api/auth/google", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          credential: credentialResponse.credential
+        })
+      })
+
+      if (!res.ok) {
+        throw new Error("Google login failed")
+      }
+
+      const user = await res.json()
+
+      localStorage.setItem("token", "logged-in")
+      localStorage.setItem("user", JSON.stringify(user))
+
+      if (user.role === "ADMIN") navigate("/admin")
+      else navigate("/shop")
+    } catch (e) {
+      setError(e.message || "Google login failed")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  function handleGoogleError() {
+    setError("Google sign-in failed")
   }
 
   return (
@@ -139,6 +175,14 @@ export default function Login() {
           >
             Create Account
           </span>
+
+          {/* Google Login */}
+          <div style={{ marginTop: 10 }}>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+            />
+          </div>
         </div>
       </div>
     </div>
