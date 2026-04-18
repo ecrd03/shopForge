@@ -17,17 +17,21 @@ public class DataSeeder {
             if (users.findByEmail("admin@shopforge.com").isEmpty()) {
                 User admin = new User();
                 admin.setEmail("admin@shopforge.com");
+                admin.setUsername("admin");
                 admin.setPasswordHash(encoder.encode("admin123"));
                 admin.setRole(Role.ADMIN);
+                admin.setActive(true);
                 users.save(admin);
             }
 
             if (users.findByEmail("owner@shopforge.com").isEmpty()) {
                 User owner = new User();
                 owner.setEmail("owner@shopforge.com");
+                owner.setUsername("owner");
                 owner.setPasswordHash(encoder.encode("owner123"));
                 owner.setRole(Role.SHOP_OWNER);
                 owner.setShopId(1L);
+                owner.setActive(true);
                 users.save(owner);
             }
         };
