@@ -2,6 +2,8 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { GoogleLogin } from "@react-oauth/google"
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || ""
+
 export default function Login() {
   const navigate = useNavigate()
 
@@ -15,7 +17,7 @@ export default function Login() {
     setLoading(true)
 
     try {
-      const res = await fetch("http://localhost:8080/api/auth/login", {
+      const res = await fetch(`${API_BASE}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
@@ -45,7 +47,7 @@ export default function Login() {
     setLoading(true)
 
     try {
-      const res = await fetch("http://localhost:8080/api/auth/google", {
+      const res = await fetch(`${API_BASE}/api/auth/google`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -84,7 +86,6 @@ export default function Login() {
         overflow: "hidden"
       }}
     >
-      {/* Left Image Banner */}
       <div
         style={{
           flex: 1,
@@ -94,7 +95,6 @@ export default function Login() {
         }}
       />
 
-      {/* Right Login */}
       <div
         style={{
           flex: 1,
@@ -176,7 +176,6 @@ export default function Login() {
             Create Account
           </span>
 
-          {/* Google Login */}
           <div style={{ marginTop: 10 }}>
             <GoogleLogin
               onSuccess={handleGoogleSuccess}
