@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import Divider from "../components/divider"
+import Divider from "../components/Divider"
 
 export default function CreateAccount() {
     const navigate = useNavigate()
