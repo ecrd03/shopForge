@@ -73,7 +73,7 @@ public class Shop {
     private Boolean customCategoryEnabled = false;
 
     @Lob
-    @Column(name = "custom_category_lines", columnDefinition = "LONGTEXT")
+    @Column(name = "custom_category_lines", columnDefinition = "TEXT")
     private String customCategoryLines;
 
     // GETTERS

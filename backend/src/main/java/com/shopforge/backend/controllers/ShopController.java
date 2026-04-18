@@ -44,7 +44,7 @@ public class ShopController {
                         shop.getShopifyUrl(),
                         shop.getDepopUrl(),
                         shop.getEbayUrl(),
-                        products.countByShopId(shop.getId())
+                        0
                 ))
                 .toList();
     }
