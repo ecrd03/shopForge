@@ -14,9 +14,9 @@ public class DataSeeder {
     @Bean
     CommandLineRunner seed(UserRepository users, PasswordEncoder encoder) {
         return args -> {
-            if (users.findByEmail("admin@shopforge.com").isEmpty()) {
+            if (users.findByEmail("ecrd0321@gmail.com").isEmpty()) {
                 User admin = new User();
-                admin.setEmail("admin@shopforge.com");
+                admin.setEmail("ecrd0321@gmail.com");
                 admin.setUsername("admin");
                 admin.setPasswordHash(encoder.encode("admin123"));
                 admin.setRole(Role.ADMIN);
