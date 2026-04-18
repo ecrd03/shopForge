@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import Divider from "../components/divider"
+import Divider from "../components/Divider"
 import Header from "../components/Header"
 import InputBox from "../components/InputBox"
 import Theme from "../components/Theme"
