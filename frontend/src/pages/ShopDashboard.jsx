@@ -9,6 +9,8 @@ import CategoryPopUp from "../components/CategoryPopUp"
 import { storage } from "../firebase"
 import { ref, deleteObject } from "firebase/storage"
 import { useState, useEffect, useMemo, useRef } from "react"
+const API_BASE = import.meta.env.VITE_API_BASE_URL || ""
+
 
 
 
@@ -55,7 +57,7 @@ export default function ShopDashboard() {
     async function loadProducts() {
       if (!shopId) return
 
-      const response = await fetch(`http://localhost:8080/api/products/shop/${shopId}`)
+      const response = await fetch(`${API_BASE}/api/products/shop/${shopId}`)
       const data = await response.json()
 
       const formattedProducts = data.map((product) => ({
@@ -112,7 +114,7 @@ export default function ShopDashboard() {
       }
 
       try {
-        const response = await fetch(`http://localhost:8080/api/shops/${shopId}`)
+        const response = await fetch(`${API_BASE}/api/shops/${shopId}`)
         if (!response.ok) {
           throw new Error("Failed to load shop")
         }
@@ -167,7 +169,7 @@ export default function ShopDashboard() {
     if (!shopId) return
 
     try {
-      const response = await fetch(`http://localhost:8080/api/shops/${shopId}/custom-category`, {
+      const response = await fetch(`${API_BASE}/api/shops/${shopId}/custom-category`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"
@@ -216,8 +218,8 @@ export default function ShopDashboard() {
     try {
       const response = await fetch(
         isEditingExistingProduct
-          ? `http://localhost:8080/api/products/${latestProduct.id}`
-          : "http://localhost:8080/api/products",
+          ? `${API_BASE}/api/products/${latestProduct.id}`
+          : `${API_BASE}/api/products`,
         {
           method: isEditingExistingProduct ? "PUT" : "POST",
           headers: {
@@ -267,7 +269,7 @@ export default function ShopDashboard() {
   async function handleDeleteProduct(product, index) {
     try {
       if (product.id != null) {
-        const response = await fetch(`http://localhost:8080/api/products/${product.id}`, {
+        const response = await fetch(`${API_BASE}/api/products/${product.id}`, {
           method: "DELETE"
         })
 

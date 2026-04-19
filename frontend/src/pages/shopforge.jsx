@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { Menu, ChevronRight, ChevronDown, X } from "lucide-react"
 import { getThemeColors } from "../components/ThemeColors"
 import { useParams } from "react-router-dom"
-
+const API_BASE = import.meta.env.VITE_API_BASE_URL || ""
 
 function getSocialButtonStyle(colors) {
     return {
@@ -329,7 +329,7 @@ export default function ShopForge() {
                 setLoading(true)
                 setError("")
 
-                const usersRes = await fetch("http://localhost:8080/api/users")
+                const usersRes = await fetch(`${API_BASE}/api/users`)
 
                 if (!usersRes.ok) {
                     throw new Error("Failed to load users")
@@ -349,8 +349,8 @@ export default function ShopForge() {
                 const shopId = matchedUser.shopId
 
                 const [shopRes, productsRes] = await Promise.all([
-                    fetch(`http://localhost:8080/api/shops/${shopId}`),
-                    fetch(`http://localhost:8080/api/products/shop/${shopId}`)
+                    fetch(`${API_BASE}/api/shops/${shopId}`),
+                    fetch(`${API_BASE}/api/products/shop/${shopId}`)
                 ])
 
                 if (!shopRes.ok) {
@@ -1351,7 +1351,7 @@ export default function ShopForge() {
                     </div>
                 </>
             )}
-                      <div style={{ marginTop: 80 }} />
+            <div style={{ marginTop: 80 }} />
 
         </div>
     )
