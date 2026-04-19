@@ -44,7 +44,6 @@ export default function ImagePopUp({
 
                     return {
                         id: `${Date.now()}-${index}`,
-                        file,
                         preview: url,
                         url,
                         path

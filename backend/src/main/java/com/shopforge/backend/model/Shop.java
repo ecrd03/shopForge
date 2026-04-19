@@ -72,7 +72,6 @@ public class Shop {
     @Column(name = "custom_category_enabled", nullable = false)
     private Boolean customCategoryEnabled = false;
 
-    @Lob
     @Column(name = "custom_category_lines", columnDefinition = "TEXT")
     private String customCategoryLines;
 
