@@ -30,15 +30,15 @@ public class Product {
     private String buyingLink;
 
     @Lob
-    @Column(name = "images_json", columnDefinition = "LONGTEXT")
+    @Column(name = "images_json")
     private String imagesJson;
 
     @Lob
-    @Column(name = "category_tags_json", columnDefinition = "LONGTEXT")
+    @Column(name = "category_tags_json")
     private String categoryTagsJson;
 
     @Lob
-    @Column(name = "search_tags_json", columnDefinition = "LONGTEXT")
+    @Column(name = "search_tags_json")
     private String searchTagsJson;
 
     public String getCategoryTagsJson() { return categoryTagsJson; }
