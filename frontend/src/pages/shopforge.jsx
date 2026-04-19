@@ -319,8 +319,8 @@ export default function ShopForge() {
 
     useEffect(() => {
         async function loadData() {
-            if (!username) {
-                setError("No shop username found")
+            if (!shopName) {
+                setError("No shop name found")
                 setLoading(false)
                 return
             }
@@ -418,7 +418,7 @@ export default function ShopForge() {
         }
 
         loadData()
-    }, [username])
+    }, [shopName])
 
     useEffect(() => {
         function handleClickOutside(event) {
