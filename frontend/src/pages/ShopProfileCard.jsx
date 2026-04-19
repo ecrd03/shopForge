@@ -30,7 +30,14 @@ export default function ShopProfileCard() {
         return <div style={{ padding: 24 }}>No shop data</div>
     }
 
-    const displayUsername = user?.username || `shop${shop.id ?? 1}`
+    function toSlug(value) {
+        return String(value || "")
+            .toLowerCase()
+            .trim()
+            .replace(/\s+/g, "-")
+    }
+
+    const shopSlug = toSlug(shop?.name || "")
     const contactName = user?.username || shop.name || "No name"
     const contactEmail = user?.email || "No email"
     const contactPhone = formatPhone(user?.phone)
@@ -161,7 +168,7 @@ export default function ShopProfileCard() {
                                     justifyContent: "center"
                                 }}
                                 onClick={() => {
-                                    const shopUrl = `http://localhost:5173/shop/${displayUsername}`
+                                    const shopUrl = `${window.location.origin}/shop/${shopSlug}`
                                     window.open(shopUrl, "_blank")
                                 }}
                             >
