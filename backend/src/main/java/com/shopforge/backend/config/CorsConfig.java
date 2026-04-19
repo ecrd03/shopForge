@@ -19,7 +19,10 @@ public class CorsConfig {
                 "http://localhost:5173",
                 "http://127.0.0.1:5173",
                 "https://shopforgeco.com",
-                "https://www.shopforgeco.com"
+                "https://www.shopforgeco.com",
+                "https://shop-sf.com",
+                "https://www.shop-sf.com",
+                "https://*.shop-sf.com"
         ));
 
         config.setAllowedMethods(List.of(
