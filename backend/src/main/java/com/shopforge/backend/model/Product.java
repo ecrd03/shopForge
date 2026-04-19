@@ -29,15 +29,12 @@ public class Product {
     @Column(name = "buying_link")
     private String buyingLink;
 
-    @Lob
     @Column(name = "images_json")
     private String imagesJson;
 
-    @Lob
     @Column(name = "category_tags_json")
     private String categoryTagsJson;
 
-    @Lob
     @Column(name = "search_tags_json")
     private String searchTagsJson;
 
