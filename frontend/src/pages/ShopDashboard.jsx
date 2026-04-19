@@ -661,7 +661,11 @@ export default function ShopDashboard() {
                 return String(value || "")
                   .toLowerCase()
                   .trim()
+                  .replace(/'/g, "")
+                  .replace(/[^a-z0-9\s-]/g, "")
                   .replace(/\s+/g, "-")
+                  .replace(/-+/g, "-")
+                  .replace(/^-|-$/g, "")
               }
 
               const shopSlug = toSlug(shop?.name || "")
