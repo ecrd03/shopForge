@@ -9,11 +9,27 @@ import ProtectedRoute from "./components/ProtectedRoute"
 import Settings from "./pages/Settings"
 import ShopForge from "./pages/shopforge"
 
+function RootPage() {
+  const host = window.location.hostname.toLowerCase()
+
+  const isShopSubdomain =
+    host.endsWith(".shop-sf.com") &&
+    host !== "shop-sf.com" &&
+    host !== "www.shop-sf.com"
+
+  if (isShopSubdomain) {
+    return <ShopForge />
+  }
+
+  return <Login />
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<RootPage />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/createAccount" element={<CreateAccount />} />
 
         <Route
@@ -62,7 +78,7 @@ export default function App() {
         />
 
         <Route path="/shop/:shopName" element={<ShopForge />} />
-        
+
         <Route path="*" element={<div style={{ padding: 24 }}>not found</div>} />
       </Routes>
     </BrowserRouter>
