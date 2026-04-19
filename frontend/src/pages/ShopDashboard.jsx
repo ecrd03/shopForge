@@ -58,7 +58,22 @@ export default function ShopDashboard() {
       if (!shopId) return
 
       const response = await fetch(`${API_BASE}/api/products/shop/${shopId}`)
-      const data = await response.json()
+
+      let data = []
+
+      try {
+        data = await response.json()
+      } catch (e) {
+        console.error("failed to parse products response", e)
+      }
+
+      console.log("products response:", data)
+
+      if (!Array.isArray(data)) {
+        console.error("expected array but got:", data)
+        setProducts([])
+        return
+      }
 
       const formattedProducts = data.map((product) => ({
         ...product,
@@ -86,6 +101,7 @@ export default function ShopDashboard() {
         isActive: product.isActive ?? true,
         isSaved: true
       }))
+
       const categoryTagSet = new Set()
       const searchTagSet = new Set()
 
@@ -98,11 +114,12 @@ export default function ShopDashboard() {
         category: Array.from(categoryTagSet),
         search: Array.from(searchTagSet)
       })
+
       setProducts(formattedProducts)
     }
-
     loadProducts()
   }, [shopId])
+
 
   useEffect(() => {
     async function loadShop() {
@@ -197,23 +214,44 @@ export default function ShopDashboard() {
     const updatedProducts = [...products]
 
     const productToSave = {
-      shopId: shopId,
-      name: latestProduct.name,
-      price: Number(latestProduct.price),
-      stock: Number(latestProduct.stock),
-      categoryTags: latestProduct.categoryTags || [],
-      searchTags: latestProduct.searchTags || [],
-      images: (latestProduct.images || []).map((image, imageIndex) => ({
-        id: image.id || `${latestProduct.id || "product"}-image-${imageIndex}`,
-        preview: image.preview || image.url || "",
-        url: image.url || image.preview || "",
-        path: image.path || ""
-      })),
+      shopId: Number(shopId),
+
+      name: latestProduct.name || "",
+
+      price: Number(latestProduct.price) || 0,
+      stock: Number(latestProduct.stock) || 0,
+
+      categoryTags: Array.isArray(latestProduct.categoryTags)
+        ? latestProduct.categoryTags
+        : [],
+
+      searchTags: Array.isArray(latestProduct.searchTags)
+        ? latestProduct.searchTags
+        : [],
+
+      images: Array.isArray(latestProduct.images)
+        ? latestProduct.images.map((image, imageIndex) => ({
+          id: image.id || `${latestProduct.id || "product"}-image-${imageIndex}`,
+          preview: image.preview || image.url || "",
+          url: image.url || image.preview || "",
+          path: image.path || ""
+        }))
+        : [],
+
       buyingLink: latestProduct.buyingLink || "",
+
       isActive: latestProduct.isActive ?? true
     }
 
     const isEditingExistingProduct = latestProduct.id != null
+
+    console.log("SENDING PRODUCT:", productToSave)
+    console.log("IS EDIT:", isEditingExistingProduct)
+    console.log("URL:",
+      isEditingExistingProduct
+        ? `${API_BASE}/api/products/${latestProduct.id}`
+        : `${API_BASE}/api/products`
+    )
 
     try {
       const response = await fetch(
@@ -230,7 +268,9 @@ export default function ShopDashboard() {
       )
 
       if (!response.ok) {
-        throw new Error("Failed to save product")
+        const errorText = await response.text()
+        console.log("save product error:", errorText)
+        throw new Error(errorText || "Failed to save product")
       }
 
       const savedProduct = await response.json()
