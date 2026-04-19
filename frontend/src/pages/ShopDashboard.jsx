@@ -657,8 +657,15 @@ export default function ShopDashboard() {
           <button
             type="button"
             onClick={() => {
-              const username = user?.username || `shop${shopId}`
-              window.open(`/shop/${username}`, "_blank")
+              function toSlug(value) {
+                return String(value || "")
+                  .toLowerCase()
+                  .trim()
+                  .replace(/\s+/g, "-")
+              }
+
+              const shopSlug = toSlug(shop?.name || "")
+              window.open(`/shop/${shopSlug}`, "_blank")
             }}
             style={{
               width: 44,
