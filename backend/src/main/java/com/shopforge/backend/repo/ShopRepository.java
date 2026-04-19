@@ -1,5 +1,5 @@
 package com.shopforge.backend.repo;
-
+import java.util.Optional;
 import com.shopforge.backend.model.Shop;
 import org.springframework.data.jpa.repository.JpaRepository;
 
