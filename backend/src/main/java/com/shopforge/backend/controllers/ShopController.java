@@ -186,4 +186,16 @@ public class ShopController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+    @GetMapping("/slug/{slug}")
+    public ResponseEntity<?> getShopBySlug(@PathVariable String slug) {
+        return shops.findAll().stream()
+                .filter(shop -> toSlug(shop.getName()).equalsIgnoreCase(slug))
+                .findFirst()
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    private String toSlug(String value) {
+        return value.toLowerCase().trim().replaceAll("\\s+", "-");
+    }
 }

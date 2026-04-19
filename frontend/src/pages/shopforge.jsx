@@ -290,6 +290,20 @@ export default function ShopForge() {
 
     const { shopName } = useParams()
 
+    function getShopKey() {
+        const host = window.location.hostname.toLowerCase()
+
+        if (
+            host.endsWith(".shop-sf.com") &&
+            host !== "shop-sf.com" &&
+            host !== "www.shop-sf.com"
+        ) {
+            return host.replace(".shop-sf.com", "")
+        }
+
+        return shopName || ""
+    }
+
 
     function openProductModal(product) {
         setSelectedProduct(product)
@@ -319,7 +333,30 @@ export default function ShopForge() {
 
     useEffect(() => {
         async function loadData() {
-            if (!shopName) {
+            function toSlug(value) {
+                return String(value || "")
+                    .toLowerCase()
+                    .trim()
+                    .replace(/\s+/g, "-")
+            }
+
+            function getShopSlug() {
+                const host = window.location.hostname.toLowerCase()
+
+                if (
+                    host.endsWith(".shop-sf.com") &&
+                    host !== "shop-sf.com" &&
+                    host !== "www.shop-sf.com"
+                ) {
+                    return host.replace(".shop-sf.com", "")
+                }
+
+                return shopName || ""
+            }
+
+            const currentShopSlug = getShopSlug()
+
+            if (!currentShopSlug) {
                 setError("No shop name found")
                 setLoading(false)
                 return
@@ -337,15 +374,8 @@ export default function ShopForge() {
 
                 const shopsData = await shopsRes.json()
 
-                function toSlug(value) {
-                    return String(value || "")
-                        .toLowerCase()
-                        .trim()
-                        .replace(/\s+/g, "-")
-                }
-
                 const matchedShop = shopsData.find(
-                    (shop) => toSlug(shop.name) === shopName.toLowerCase()
+                    (shop) => toSlug(shop.name) === currentShopSlug
                 )
 
                 if (!matchedShop?.id) {
