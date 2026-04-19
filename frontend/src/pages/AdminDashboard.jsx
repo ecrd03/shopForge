@@ -49,11 +49,14 @@ export default function AdminDashboard() {
               }
 
               const productsData = await productsRes.json()
+              console.log(`products for shop ${shop.id}:`, productsData)
 
               return {
                 ...shop,
                 logoUrl: shop.logoUrl,
-                productCount: Array.isArray(productsData) ? productsData.length : 0
+                productCount: Array.isArray(productsData)
+                  ? productsData.length
+                  : Number(productsData?.length || productsData?.productCount || 0)
               }
             } catch (error) {
               console.error(`Failed to load product count for shop ${shop.id}:`, error)
