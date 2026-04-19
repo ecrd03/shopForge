@@ -288,7 +288,7 @@ export default function ShopForge() {
 
     const filterRef = useRef(null)
 
-    const { username } = useParams()
+    const { shopName } = useParams()
 
 
     function openProductModal(product) {
@@ -329,24 +329,30 @@ export default function ShopForge() {
                 setLoading(true)
                 setError("")
 
-                const usersRes = await fetch(`${API_BASE}/api/users`)
+                const shopsRes = await fetch(`${API_BASE}/api/shops`)
 
-                if (!usersRes.ok) {
-                    throw new Error("Failed to load users")
+                if (!shopsRes.ok) {
+                    throw new Error("Failed to load shops")
                 }
 
-                const usersData = await usersRes.json()
+                const shopsData = await shopsRes.json()
 
-                const matchedUser = usersData.find(
-                    (user) =>
-                        String(user.username || "").toLowerCase() === username.toLowerCase()
+                function toSlug(value) {
+                    return String(value || "")
+                        .toLowerCase()
+                        .trim()
+                        .replace(/\s+/g, "-")
+                }
+
+                const matchedShop = shopsData.find(
+                    (shop) => toSlug(shop.name) === shopName.toLowerCase()
                 )
 
-                if (!matchedUser?.shopId) {
+                if (!matchedShop?.id) {
                     throw new Error("Shop not found")
                 }
 
-                const shopId = matchedUser.shopId
+                const shopId = matchedShop.id
 
                 const [shopRes, productsRes] = await Promise.all([
                     fetch(`${API_BASE}/api/shops/${shopId}`),

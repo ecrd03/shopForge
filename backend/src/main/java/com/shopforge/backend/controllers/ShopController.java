@@ -180,4 +180,10 @@ public class ShopController {
 
         return response;
     }
+    @GetMapping("/name/{name}")
+    public ResponseEntity<?> getShopByName(@PathVariable String name) {
+        return shops.findByNameIgnoreCase(name)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 }
