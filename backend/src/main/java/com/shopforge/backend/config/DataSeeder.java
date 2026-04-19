@@ -23,17 +23,6 @@ public class DataSeeder {
                 admin.setActive(true);
                 users.save(admin);
             }
-
-            if (users.findByEmail("owner@shopforge.com").isEmpty()) {
-                User owner = new User();
-                owner.setEmail("owner@shopforge.com");
-                owner.setUsername("owner");
-                owner.setPasswordHash(encoder.encode("owner123"));
-                owner.setRole(Role.SHOP_OWNER);
-                owner.setShopId(1L);
-                owner.setActive(true);
-                users.save(owner);
-            }
         };
     }
 

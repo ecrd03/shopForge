@@ -174,7 +174,7 @@ const ThemeColors = {
     surface: "#000000",
     surface2: "#1f1f1f",
     border: "#4c59ee",
-    borderSoft: "#3a1a1a",
+    borderSoft: "#4c59ee",
     text: "#ffffff",
     textSoft: "#ffffff",
     muted: "#a5d2fc",
