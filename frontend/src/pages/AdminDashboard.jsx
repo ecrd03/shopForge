@@ -39,11 +39,33 @@ export default function AdminDashboard() {
         console.log("shops:", shopsData)
         console.log("users:", usersData)
 
-        const formattedShops = shopsData.map((shop) => ({
-          ...shop,
-          logoUrl: shop.logoUrl,
-          productCount: shop.productCount ?? shop.products?.length ?? 0
-        }))
+        const formattedShops = await Promise.all(
+          shopsData.map(async (shop) => {
+            try {
+              const productsRes = await fetch(`${API_BASE}/api/products/shop/${shop.id}`)
+
+              if (!productsRes.ok) {
+                throw new Error("Failed to load products")
+              }
+
+              const productsData = await productsRes.json()
+
+              return {
+                ...shop,
+                logoUrl: shop.logoUrl,
+                productCount: Array.isArray(productsData) ? productsData.length : 0
+              }
+            } catch (error) {
+              console.error(`Failed to load product count for shop ${shop.id}:`, error)
+
+              return {
+                ...shop,
+                logoUrl: shop.logoUrl,
+                productCount: 0
+              }
+            }
+          })
+        )
 
         setShops(formattedShops)
         setUsers(usersData)
