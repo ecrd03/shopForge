@@ -36,4 +36,14 @@ public class DataSeeder {
             }
         };
     }
+    @Bean
+    CommandLineRunner fixUser(UserRepository users) {
+        return args -> {
+            users.findByEmail("ecrd0321@gmail.com").ifPresent(user -> {
+                user.setRole(Role.ADMIN);
+                user.setShopId(null);
+                users.save(user);
+            });
+        };
+    }
 }
