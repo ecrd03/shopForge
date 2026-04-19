@@ -25,14 +25,19 @@ public class ProductController {
 
     @GetMapping("/shop/{shopId}")
     public List<ProductResponse> byShop(@PathVariable Long shopId) {
-        List<Product> shopProducts = products.findByShopId(shopId);
-        List<ProductResponse> response = new ArrayList<>();
+        try {
+            List<Product> shopProducts = products.findByShopId(shopId);
+            List<ProductResponse> response = new ArrayList<>();
 
-        for (Product product : shopProducts) {
-            response.add(buildProductResponse(product));
+            for (Product product : shopProducts) {
+                response.add(buildProductResponse(product));
+            }
+
+            return response;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
         }
-
-        return response;
     }
 
     @PostMapping
@@ -104,7 +109,8 @@ public class ProductController {
             if (json == null || json.isBlank()) {
                 return new ArrayList<>();
             }
-            return objectMapper.readValue(json, new TypeReference<List<String>>() {});
+            return objectMapper.readValue(json, new TypeReference<List<String>>() {
+            });
         } catch (Exception e) {
             return new ArrayList<>();
         }
@@ -121,7 +127,8 @@ public class ProductController {
             if (trimmedJson.startsWith("[\"")) {
                 List<String> oldUrls = objectMapper.readValue(
                         trimmedJson,
-                        new TypeReference<List<String>>() {}
+                        new TypeReference<List<String>>() {
+                        }
                 );
 
                 List<ProductImageRequest> convertedImages = new ArrayList<>();
@@ -143,7 +150,8 @@ public class ProductController {
 
             return objectMapper.readValue(
                     trimmedJson,
-                    new TypeReference<List<ProductImageRequest>>() {}
+                    new TypeReference<List<ProductImageRequest>>() {
+                    }
             );
         } catch (Exception e) {
             return new ArrayList<>();
