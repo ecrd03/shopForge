@@ -290,21 +290,6 @@ export default function ShopForge() {
 
     const { shopName } = useParams()
 
-    function getShopKey() {
-        const host = window.location.hostname.toLowerCase()
-
-        if (
-            host.endsWith(".shop-sf.com") &&
-            host !== "shop-sf.com" &&
-            host !== "www.shop-sf.com"
-        ) {
-            return host.replace(".shop-sf.com", "")
-        }
-
-        return shopName || ""
-    }
-
-
     function openProductModal(product) {
         setSelectedProduct(product)
         setSelectedImageIndex(0)
@@ -349,6 +334,10 @@ export default function ShopForge() {
                     host !== "www.shop-sf.com"
                 ) {
                     return host.replace(".shop-sf.com", "")
+                }
+
+                if (host === "localhost") {
+                    return new URLSearchParams(window.location.search).get("shop") || ""
                 }
 
                 return shopName || ""
