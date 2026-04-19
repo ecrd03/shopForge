@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom"
 import { storage } from "../firebase"
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
 import ThemeColors from "../components/ThemeColors"
+const API_BASE = import.meta.env.VITE_API_BASE_URL || ""
+
 
 export default function EditShop() {
   const navigate = useNavigate()
@@ -60,7 +62,7 @@ export default function EditShop() {
       }
 
       try {
-        const response = await fetch(`http://localhost:8080/api/shops/${shopId}`)
+        const response = await fetch(`${API_BASE}/api/shops/${shopId}`)
         if (!response.ok) {
           throw new Error("Failed to load shop")
         }
@@ -142,7 +144,7 @@ export default function EditShop() {
     setMessage("")
 
     try {
-      const response = await fetch(`http://localhost:8080/api/shops/${shopId}`, {
+      const response = await fetch(`${API_BASE}/api/shops/${shopId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"

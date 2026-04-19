@@ -2,6 +2,8 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import Header from "../components/Header"
 import InputBox from "../components/InputBox"
+const API_BASE = import.meta.env.VITE_API_BASE_URL || ""
+
 
 export default function Settings() {
   const navigate = useNavigate()
@@ -32,7 +34,7 @@ export default function Settings() {
     try {
       setSaving(true)
 
-      const profileResponse = await fetch(`http://localhost:8080/api/users/${user.id}`, {
+      const profileResponse = await fetch(`${API_BASE}/api/users/${user.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"
@@ -59,7 +61,7 @@ export default function Settings() {
       localStorage.setItem("user", JSON.stringify(updatedUser))
 
       if (password.trim()) {
-        const passwordResponse = await fetch(`http://localhost:8080/api/users/${user.id}/password`, {
+        const passwordResponse = await fetch(`${API_BASE}/api/users/${user.id}/password`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json"

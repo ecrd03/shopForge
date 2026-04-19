@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom"
 import Header from "../components/Header"
 import SearchBar from "../components/SearchBar"
 import ShopCard from "../components/ShopCard"
+const API_BASE = import.meta.env.VITE_API_BASE_URL || ""
+
 
 export default function AdminDashboard() {
   const navigate = useNavigate()
@@ -19,8 +21,8 @@ export default function AdminDashboard() {
         setError("")
 
         const [shopsRes, usersRes] = await Promise.all([
-          fetch("http://localhost:8080/api/shops"),
-          fetch("http://localhost:8080/api/users")
+          fetch(`${API_BASE}/api/shops`),
+          fetch(`${API_BASE}/api/users`)
         ])
 
         if (!shopsRes.ok) {

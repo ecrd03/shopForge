@@ -1,6 +1,8 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import Divider from "../components/Divider"
+const API_BASE = import.meta.env.VITE_API_BASE_URL || ""
+
 
 export default function CreateAccount() {
     const navigate = useNavigate()
@@ -30,7 +32,7 @@ export default function CreateAccount() {
         try {
             setLoading(true)
 
-            const response = await fetch("http://localhost:8080/api/auth/register", {
+            const response = await fetch(`${API_BASE}/api/auth/register`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

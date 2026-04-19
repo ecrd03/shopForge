@@ -2,6 +2,8 @@ import { useLocation, useNavigate } from "react-router-dom"
 import { useState } from "react"
 import Header from "../components/Header"
 import ToggleButton from "../components/ToggleButton"
+const API_BASE = import.meta.env.VITE_API_BASE_URL || ""
+
 
 function formatPhone(phone) {
     if (!phone) return "No phone"
