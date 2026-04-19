@@ -665,7 +665,7 @@ export default function ShopDashboard() {
               }
 
               const shopSlug = toSlug(shop?.name || "")
-              window.open(`/shop/${shopSlug}`, "_blank")
+              window.open(`https://${shopSlug}.shop-sf.com`, "_blank")
             }}
             style={{
               width: 44,

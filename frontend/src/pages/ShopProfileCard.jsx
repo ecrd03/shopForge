@@ -168,7 +168,7 @@ export default function ShopProfileCard() {
                                     justifyContent: "center"
                                 }}
                                 onClick={() => {
-                                    const shopUrl = `${window.location.origin}/shop/${shopSlug}`
+                                    const shopUrl = `https://${shopSlug}.shop-sf.com`
                                     window.open(shopUrl, "_blank")
                                 }}
                             >
