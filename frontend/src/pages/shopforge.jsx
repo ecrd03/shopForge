@@ -975,7 +975,6 @@ export default function ShopForge() {
                         display: "flex",
                         gap: 16,
                         alignItems: "center",
-                        flexWrap: "wrap"
                     }}
                 >
                     <input
@@ -1003,6 +1002,7 @@ export default function ShopForge() {
                             onClick={() => setFilterOpen((prev) => !prev)}
                             style={{
                                 height: 54,
+                                minWidth: 0,
                                 padding: "0 28px",
                                 borderRadius: 20,
                                 border: `1px solid ${colors.border}`,
@@ -1021,7 +1021,7 @@ export default function ShopForge() {
                                 style={{
                                     position: "absolute",
                                     top: 62,
-                                    left: 0,
+                                    right: 0,
                                     width: 250,
                                     backgroundColor: colors.surface,
                                     border: `1px solid ${colors.border}`,
