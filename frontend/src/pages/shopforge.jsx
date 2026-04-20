@@ -1021,7 +1021,7 @@ export default function ShopForge() {
                                 style={{
                                     position: "absolute",
                                     top: 62,
-                                    right: 0,
+                                    left: 0,
                                     width: 250,
                                     backgroundColor: colors.surface,
                                     border: `1px solid ${colors.border}`,
