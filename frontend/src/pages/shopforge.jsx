@@ -974,7 +974,7 @@ export default function ShopForge() {
                     style={{
                         display: "flex",
                         gap: 16,
-                        alignItems: "center",
+                        alignItems: "flex-end",
                         flexWrap: "wrap"
                     }}
                 >
@@ -1003,7 +1003,6 @@ export default function ShopForge() {
                             onClick={() => setFilterOpen((prev) => !prev)}
                             style={{
                                 height: 54,
-                                minWidth: 0,
                                 padding: "0 28px",
                                 borderRadius: 20,
                                 border: `1px solid ${colors.border}`,
