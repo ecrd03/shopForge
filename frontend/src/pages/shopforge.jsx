@@ -984,7 +984,8 @@ export default function ShopForge() {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         style={{
-                            width: "87%",   
+                            flex: "1 1 260px",
+                            minWidth: 0,
                             height: 54,
                             borderRadius: 20,
                             border: `1px solid ${colors.border}`,
@@ -999,9 +1000,7 @@ export default function ShopForge() {
                     <div
                         style={{
                             position: "relative",
-                            width: "100%",
-                            display: "flex",
-                            justifyContent: "flex-end"
+                            marginLeft: "auto"
                         }}
                         ref={filterRef}
                     >
@@ -1092,7 +1091,6 @@ export default function ShopForge() {
                                 />
                             </div>
                         )}
-
                     </div>
                 </div>
 
