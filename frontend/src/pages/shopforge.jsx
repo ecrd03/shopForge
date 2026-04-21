@@ -974,7 +974,7 @@ export default function ShopForge() {
                     style={{
                         display: "flex",
                         gap: 16,
-                        alignItems: "flex-end",
+                        alignItems: "center",
                         flexWrap: "wrap"
                     }}
                 >
@@ -984,8 +984,7 @@ export default function ShopForge() {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         style={{
-                            flex: 1,
-                            minWidth: 260,
+                            width: "100%",   // key change
                             height: 54,
                             borderRadius: 20,
                             border: `1px solid ${colors.border}`,
@@ -997,7 +996,15 @@ export default function ShopForge() {
                         }}
                     />
 
-                    <div style={{ position: "relative" }} ref={filterRef}>
+                    <div
+                        style={{
+                            position: "relative",
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "flex-end"
+                        }}
+                        ref={filterRef}
+                    >
                         <button
                             type="button"
                             onClick={() => setFilterOpen((prev) => !prev)}
