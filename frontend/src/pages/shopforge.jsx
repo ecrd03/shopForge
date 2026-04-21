@@ -975,6 +975,7 @@ export default function ShopForge() {
                         display: "flex",
                         gap: 16,
                         alignItems: "center",
+                        flexWrap: "wrap"
                     }}
                 >
                     <input
