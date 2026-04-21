@@ -999,7 +999,7 @@ export default function ShopForge() {
                     <div
                         style={{
                             position: "relative",
-                            width: "100%",
+                            width: "92%",
                             display: "flex",
                             justifyContent: "flex-end"
                         }}
