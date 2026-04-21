@@ -984,7 +984,7 @@ export default function ShopForge() {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         style={{
-                            width: "100%",   // key change
+                            width: "87%",   
                             height: 54,
                             borderRadius: 20,
                             border: `1px solid ${colors.border}`,
@@ -999,7 +999,7 @@ export default function ShopForge() {
                     <div
                         style={{
                             position: "relative",
-                            width: "85%",
+                            width: "100%",
                             display: "flex",
                             justifyContent: "flex-end"
                         }}
